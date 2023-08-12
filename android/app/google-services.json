@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "31135080982",
+    "project_id": "record-app-b1d9c",
+    "storage_bucket": "record-app-b1d9c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:31135080982:android:fdc1b7e0d9e2d30041cb37",
+        "android_client_info": {
+          "package_name": "com.example.records_application"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "31135080982-tk223296grq82f4v2j4ov9t4n7itkjum.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATXz_nFUlrQPdYnM2jM8UefG9XafdgtNw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "31135080982-tk223296grq82f4v2j4ov9t4n7itkjum.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "31135080982-jr8onvqb6q4rm09suuuq4ndt7v7r39ks.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.recordsApplication.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
