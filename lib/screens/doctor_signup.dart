@@ -26,16 +26,13 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   late double width;
   late double height;
-  bool visible = false;
 
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _contactController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _comfirmPasswordController =
-      TextEditingController();
-  final TextEditingController _doctorIdController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController contactController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController comfirmPasswordController = TextEditingController();
+  TextEditingController doctorIdController = TextEditingController();
   Uint8List? _image;
 
   final _formKey = GlobalKey<FormState>();
@@ -54,9 +51,9 @@ class _SignUpState extends State<SignUp> {
 
       if (_image != null) {
         await AuthMethod().signUpDoctor(
-          name: _nameController.text,
-          email: _emailController.text,
-          password: _passwordController.text,
+          name: nameController.text,
+          email: emailController.text,
+          password: passwordController.text,
           file: _image!,
         );
 
@@ -85,11 +82,10 @@ class _SignUpState extends State<SignUp> {
   @override
   void dispose() {
     super.dispose();
-    _nameController.dispose();
-    _usernameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _comfirmPasswordController.dispose();
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    comfirmPasswordController.dispose();
   }
 
   void registerShowToast() =>
@@ -162,7 +158,7 @@ class _SignUpState extends State<SignUp> {
                               },
                               inputType: TextInputType.name,
                               label: "Name",
-                              controller: _nameController,
+                              controller: nameController,
                               obscure: false,
                             ),
                             const Space(),
@@ -176,7 +172,7 @@ class _SignUpState extends State<SignUp> {
                               },
                               inputType: TextInputType.number,
                               label: "Doctor ID",
-                              controller: _doctorIdController,
+                              controller: doctorIdController,
                               obscure: false,
                             ),
                             const Space(),
@@ -194,7 +190,7 @@ class _SignUpState extends State<SignUp> {
                               },
                               inputType: TextInputType.emailAddress,
                               label: "Email",
-                              controller: _emailController,
+                              controller: emailController,
                               obscure: false,
                             ),
                             const Space(),
@@ -213,7 +209,7 @@ class _SignUpState extends State<SignUp> {
                                   },
                                   inputType: TextInputType.text,
                                   label: "Password",
-                                  controller: _passwordController,
+                                  controller: passwordController,
                                   suffixIcon: IconButton(
                                     onPressed: () {
                                       setState(() {
@@ -239,15 +235,15 @@ class _SignUpState extends State<SignUp> {
                                     if (value.length < 6) {
                                       return "Password is Short";
                                     }
-                                    if (_comfirmPasswordController.text !=
-                                        _passwordController.text) {
+                                    if (comfirmPasswordController.text !=
+                                        passwordController.text) {
                                       return "Passwords do not match";
                                     }
                                     return null;
                                   },
                                   inputType: TextInputType.text,
                                   label: "Comfirm Password",
-                                  controller: _comfirmPasswordController,
+                                  controller: comfirmPasswordController,
                                   suffixIcon: IconButton(
                                     onPressed: () {
                                       setState(() {
@@ -278,7 +274,7 @@ class _SignUpState extends State<SignUp> {
                                   inputType: TextInputType.phone,
                                   label: "contact",
                                   obscure: false,
-                                  controller: _contactController,
+                                  controller: contactController,
                                 );
                               },
                             ),

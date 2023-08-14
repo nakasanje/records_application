@@ -29,11 +29,11 @@ class _PSignUpState extends State<PSignUp> {
   late double height;
   bool visible = false;
 
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _contactController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController contactController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   Uint8List? _image;
 
   final _formKey = GlobalKey<FormState>();
@@ -52,9 +52,9 @@ class _PSignUpState extends State<PSignUp> {
 
       if (_image != null) {
         await AuthMethods().signUpPatientUser(
-          name: _nameController.text,
-          email: _emailController.text,
-          password: _passwordController.text,
+          name: nameController.text,
+          email: emailController.text,
+          password: passwordController.text,
           file: _image!,
         );
 
@@ -82,12 +82,12 @@ class _PSignUpState extends State<PSignUp> {
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _usernameController.dispose();
-    _emailController.dispose();
-    _contactController.dispose();
-    _passwordController.dispose();
     super.dispose();
+    nameController.dispose();
+    usernameController.dispose();
+    emailController.dispose();
+    contactController.dispose();
+    passwordController.dispose();
   }
 
   void registerShowToast() =>
@@ -162,7 +162,7 @@ class _PSignUpState extends State<PSignUp> {
                               },
                               inputType: TextInputType.name,
                               label: "Name",
-                              controller: _nameController,
+                              controller: nameController,
                               obscure: false,
                             ),
                             const Space(),
@@ -180,7 +180,7 @@ class _PSignUpState extends State<PSignUp> {
                               },
                               inputType: TextInputType.emailAddress,
                               label: "Email",
-                              controller: _emailController,
+                              controller: emailController,
                               obscure: false,
                             ),
                             const Space(),
@@ -199,7 +199,7 @@ class _PSignUpState extends State<PSignUp> {
                                   },
                                   inputType: TextInputType.text,
                                   label: "Password",
-                                  controller: _passwordController,
+                                  controller: passwordController,
                                   suffixIcon: IconButton(
                                     onPressed: () {
                                       setState(() {
@@ -227,7 +227,7 @@ class _PSignUpState extends State<PSignUp> {
 
                                     return null;
                                   },
-                                  controller: _contactController,
+                                  controller: contactController,
                                   inputType: TextInputType.number,
                                   label: 'contact',
                                   obscure: false,

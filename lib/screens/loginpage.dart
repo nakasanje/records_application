@@ -32,8 +32,8 @@ class _LoginPageState extends State<LoginPage> {
   late double height;
   bool visible = false;
 
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -47,8 +47,8 @@ class _LoginPageState extends State<LoginPage> {
           loading = true;
         });
         await AuthMethods().loginPatientUser(
-          email: _emailController.text,
-          password: _passwordController.text,
+          email: emailController.text,
+          password: passwordController.text,
         );
 
         User? user = FirebaseAuth.instance.currentUser;
@@ -77,8 +77,8 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
 
@@ -130,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                               },
                               inputType: TextInputType.emailAddress,
                               label: "Email",
-                              controller: _emailController,
+                              controller: emailController,
                               obscure: false,
                             ),
                             const Space(),
@@ -149,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
                                   },
                                   inputType: TextInputType.text,
                                   label: "Password",
-                                  controller: _passwordController,
+                                  controller: passwordController,
                                   suffixIcon: IconButton(
                                     onPressed: () {
                                       setState(() {

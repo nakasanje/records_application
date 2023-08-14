@@ -24,8 +24,8 @@ class DocLoginPage extends StatefulWidget {
 class _DocLoginPageState extends State<DocLoginPage> {
   late double width;
   late double height;
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -44,8 +44,8 @@ class _DocLoginPageState extends State<DocLoginPage> {
       });
 
       await AuthMethod().loginDoctor(
-        email: _emailController.text,
-        password: _passwordController.text,
+        email: emailController.text,
+        password: passwordController.text,
       );
 
       User? user = FirebaseAuth.instance.currentUser;
@@ -66,9 +66,9 @@ class _DocLoginPageState extends State<DocLoginPage> {
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
     super.dispose();
+    emailController.dispose();
+    passwordController.dispose();
   }
 
   bool _isVisible = false;
@@ -122,7 +122,7 @@ class _DocLoginPageState extends State<DocLoginPage> {
                                       }
                                       return null;
                                     },
-                                    controller: _emailController,
+                                    controller: emailController,
                                   ),
                                   const Space(),
                                   StatefulBuilder(
@@ -140,7 +140,7 @@ class _DocLoginPageState extends State<DocLoginPage> {
                                         },
                                         inputType: TextInputType.text,
                                         label: "Password",
-                                        controller: _passwordController,
+                                        controller: passwordController,
                                         suffixIcon: IconButton(
                                           onPressed: () {
                                             setState(() {
