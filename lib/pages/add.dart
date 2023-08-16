@@ -17,17 +17,18 @@ class AddPatientPage extends StatefulWidget {
 class _AddPatientPageState extends State<AddPatientPage> {
   final _formKey = GlobalKey<FormState>();
   final FirestoreMethods firestore = FirestoreMethods();
-  late String _id; // Make _id non-nullable
+  late String _doctorId; // Make _id non-nullable
   String _name = '';
   int _age = 0;
   String _testName = '';
   String _results = '';
   String _doctorName = '';
+  String _id = '';
 
   @override
   void initState() {
     super.initState();
-    _id =
+    _doctorId =
         Provider.of<DoctorProvider>(context, listen: false).getDoctor.doctorId;
   }
 
@@ -42,6 +43,7 @@ class _AddPatientPageState extends State<AddPatientPage> {
         testName: _testName,
         results: _results,
         doctorName: _doctorName,
+        doctorId: _doctorId,
       );
 
       await firestore.addPatient(patient);

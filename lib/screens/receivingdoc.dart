@@ -88,9 +88,9 @@ class _ReceivingDoctorsScreenState extends State<ReceivingDoctorsScreen> {
       final receivingDoctorsData = snapshot.docs
           .map<DoctorModel>((doc) {
             return DoctorModel(
-              doctorId: '',
-              username: 'Unknown Name',
-              email: 'Unknown Email',
+              doctorId: doc['doctorId'],
+              username: doc['Unknown Name'],
+              email: doc['Unknown Email'],
               photoUrl: '',
               // Other properties of the receiving doctor
             );

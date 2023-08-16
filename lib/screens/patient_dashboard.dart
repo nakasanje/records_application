@@ -75,8 +75,10 @@ class _PatientDashboardState extends State<PatientDashboard> {
 
   Future<void> fetchSharedRecords() async {
     try {
-      final snapshot =
-          await FirebaseFirestore.instance.collection('SharedRecords').get();
+      final snapshot = await FirebaseFirestore.instance
+          .collection('SharedRecords')
+          .where('id', isEqualTo: patientuser.patientId)
+          .get();
 
       final recordsData = snapshot.docs.map<SharedRecordModel>((doc) {
         return SharedRecordModel.fromSnap(doc);
@@ -102,7 +104,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
 
       await fetchSharedRecords();
 
-      if (record.patientId == patientuser.patientId) {
+      if (record.id == patientuser.patientId) {
         String sharingDoctorToken = 'sharingDoctor_fcm_token_here';
 
         await NotificationService().sendNotification(
@@ -140,7 +142,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error declining record: $error')),
       );
-      _fetchReceivingDoctorsFromSelectedPatient(record.patientId);
+      _fetchReceivingDoctorsFromSelectedPatient(record.id);
     }
   }
 
@@ -150,7 +152,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
     try {
       final snapshot = await FirebaseFirestore.instance
           .collection('SharedRecords')
-          .where('patientId', isEqualTo: patientId)
+          .where('id', isEqualTo: patientId)
           .get();
 
       final receivingDoctorsData = snapshot.docs

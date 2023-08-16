@@ -7,6 +7,7 @@ class PatientModel {
   final String name;
   final int age;
   final String id;
+  final String doctorId;
   final String testName;
   final String results;
   final String doctorName;
@@ -17,6 +18,7 @@ class PatientModel {
     required this.age,
     required this.name,
     required this.testName,
+    required this.doctorId,
     required this.results,
     required this.doctorName,
     //required this.role,
@@ -27,6 +29,7 @@ class PatientModel {
     return PatientModel(
       id: snapshot["id"],
       name: snapshot["name"],
+      doctorId: snapshot['doctorId'],
       age: snapshot["age"],
       testName: snapshot["testName"],
       results: snapshot["results"],
@@ -39,6 +42,7 @@ class PatientModel {
         "username": name,
         "id": id,
         "age": age,
+        'doctorId': doctorId,
         "testName": testName,
         "results": results,
         "doctorName": doctorName,

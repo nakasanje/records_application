@@ -36,12 +36,14 @@ class _PatientRecordsState extends State<PatientRecords> {
     try {
       final snapshot = await FirebaseFirestore.instance
           .collection('patients')
-          .where('id', isEqualTo: doctor.doctorId) // Filter by doctor's ID
+          .where('doctorId',
+              isEqualTo: doctor.doctorId) // Filter by doctor's ID
           .get();
 
       final patientsData = snapshot.docs.map<PatientModel>((doc) {
         return PatientModel(
-          id: doctor.doctorId,
+          id: doc.id,
+          doctorId: doctor.doctorId,
           name: doc['name'] ?? 'Unknown Name',
           age: doc['age'] ?? 'Unknown Age',
           testName: doc['testName'] ?? 'Unknown Test',

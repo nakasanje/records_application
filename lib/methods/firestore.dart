@@ -90,7 +90,7 @@ class FirestoreMethods {
   }
 
   Future<DocumentSnapshot> getDoctor(String doctorId) async {
-    return await doctorCollection.doc(doctor).get();
+    return await doctorCollection.doc(doctorId).get();
   }
 
   deleteDoctor(String id) async {
@@ -110,6 +110,7 @@ class FirestoreMethods {
     await patientCollection.add({
       'name': patient.name,
       'id': patient.id,
+      'doctorId': patient.doctorId,
       'testName': patient.testName,
       'age': patient.age,
       'doctorName': patient.doctorName,

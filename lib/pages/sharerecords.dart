@@ -8,6 +8,7 @@ import 'package:records_application/constants/space.dart';
 import '../constants/custom_button.dart';
 
 import '../models/doctors.dart';
+import '../models/doctors.dart' as model;
 import '../models/patient.dart';
 import '../models/patient_user.dart';
 import '../models/share.dart';
@@ -33,6 +34,7 @@ class _ShareRecordsState extends State<ShareRecords> {
   List<DoctorModel> receivingDoctor = [];
   PatientUser? selectedpatientsToApprove;
   List<PatientUser> patientsToApprove = [];
+  late model.DoctorModel doctor;
 
   @override
   void initState() {
@@ -49,7 +51,7 @@ class _ShareRecordsState extends State<ShareRecords> {
 
       final patientuser = snapshot.docs.map<PatientUser>((doc) {
         return PatientUser(
-          patientId: '',
+          patientId: doc.id,
           username: doc['username'] ?? 'Unknown Name',
           email: doc['email'] ?? 'Unknown Email',
           photoUrl: '',
@@ -66,18 +68,25 @@ class _ShareRecordsState extends State<ShareRecords> {
   }
 
   Future<void> fetchPatients() async {
+    final doctorProvider = Provider.of<DoctorProvider>(context, listen: false);
+    doctor = doctorProvider.getDoctor;
+
     try {
-      final snapshot =
-          await FirebaseFirestore.instance.collection('patients').get();
+      final snapshot = await FirebaseFirestore.instance
+          .collection('patients')
+          .where('doctorId',
+              isEqualTo: doctor.doctorId) // Filter by doctor's ID
+          .get();
 
       final patientsData = snapshot.docs.map<PatientModel>((doc) {
         return PatientModel(
           id: doc.id,
+          doctorId: doctor.doctorId,
           name: doc['name'] ?? 'Unknown Name',
           age: doc['age'] ?? 'Unknown Age',
           testName: doc['testName'] ?? 'Unknown Test',
-          doctorName: '',
-          results: '',
+          doctorName: doc['doctorName'],
+          results: doc['results'],
         );
       }).toList();
 
@@ -85,7 +94,6 @@ class _ShareRecordsState extends State<ShareRecords> {
         patients = patientsData;
       });
     } catch (e) {
-      // ignore: avoid_print
       print(e);
     }
   }
@@ -164,7 +172,7 @@ class _ShareRecordsState extends State<ShareRecords> {
       sharingDoctorId: sharingDoctorId,
       receivingDoctorId: selectedReceivingDoctor!.doctorId,
       approvalStatus: approvalStatus,
-      id: selectedPatient!.doctorName,
+      id: selectedpatientsToApprove!.patientId,
     );
 
     try {
@@ -173,8 +181,7 @@ class _ShareRecordsState extends State<ShareRecords> {
           .add(sharedRecord.toJson());
 
       // Get the patient's FCM token from your data
-      String patientToken =
-          selectedpatientsToApprove!.patientId; // Replace with actual token
+      String patientToken = ''; // Replace with actual token
 
       await sendMessage(
         patientToken,
