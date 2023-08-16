@@ -36,23 +36,11 @@ class _PatientDashboardState extends State<PatientDashboard> {
 
   late PatientUser patientuser;
 
-  getUser() async {
-    var snap =
-        await firestore.patientuserCollection.doc(firestore.patient).get();
-    patientuser = PatientUser.fromSnap(snap);
-  }
-
   @override
   void initState() {
     super.initState();
-    addData();
-    getUser();
-    fetchSharedRecords();
-  }
 
-  @override
-  void dispose() {
-    super.dispose();
+    fetchSharedRecords();
   }
 
   final userModel = FirebaseAuth.instance.currentUser;
@@ -66,14 +54,12 @@ class _PatientDashboardState extends State<PatientDashboard> {
         context, MaterialPageRoute(builder: (context) => const LoginPage()));
   }
 
-  addData() async {
-    PatientUserProvider patientuserProvider =
-        Provider.of<PatientUserProvider>(context, listen: false);
-    await patientuserProvider.refreshPatientUser();
-  }
   // Add this list
 
   Future<void> fetchSharedRecords() async {
+    final doctorProvider =
+        Provider.of<PatientUserProvider>(context, listen: false);
+    patientuser = doctorProvider.getPatientUser;
     try {
       final snapshot = await FirebaseFirestore.instance
           .collection('SharedRecords')

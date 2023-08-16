@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 //import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 //import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,6 +10,7 @@ import '../Services/patient_auth.dart';
 import '../constants/custom_button.dart';
 import '../constants/custom_textfield.dart';
 import '../constants/global_variables.dart';
+import '../constants/images.dart';
 import '../constants/logo.dart';
 import '../constants/space.dart';
 import '../constants/utils.dart';
@@ -30,7 +32,7 @@ class _PSignUpState extends State<PSignUp> {
   TextEditingController nameController = TextEditingController();
   TextEditingController usernameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
-  TextEditingController contactController = TextEditingController();
+  TextEditingController comfirmPasswordController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   Uint8List? _image;
 
@@ -84,7 +86,7 @@ class _PSignUpState extends State<PSignUp> {
     nameController.dispose();
     usernameController.dispose();
     emailController.dispose();
-    contactController.dispose();
+    comfirmPasswordController.dispose();
     passwordController.dispose();
   }
 
@@ -109,7 +111,11 @@ class _PSignUpState extends State<PSignUp> {
             physics: const BouncingScrollPhysics(),
             child: Column(
               children: [
-                const Logo(),
+                const Space(),
+                SvgPicture.asset(
+                  login_image,
+                  height: width * 0.20,
+                ),
                 const Space(),
                 Stack(
                   children: [
@@ -198,20 +204,33 @@ class _PSignUpState extends State<PSignUp> {
                 StatefulBuilder(
                   builder: (context, setState) {
                     return MyTextField(
+                      obscure: !_isVisible,
                       validate: (value) {
                         if (value!.isEmpty) {
-                          return "please Enter Your Contact";
+                          return "Please Confirm your Password";
                         }
-                        if (value.length < 10) {
-                          return "contact is Short";
+                        if (value.length < 6) {
+                          return "Password is Short";
                         }
-
+                        if (comfirmPasswordController.text !=
+                            passwordController.text) {
+                          return "Passwords do not match";
+                        }
                         return null;
                       },
-                      controller: contactController,
-                      inputType: TextInputType.number,
-                      label: 'contact',
-                      obscure: false,
+                      inputType: TextInputType.text,
+                      label: "Comfirm Password",
+                      controller: comfirmPasswordController,
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _isVisible = !_isVisible;
+                          });
+                        },
+                        icon: _isVisible
+                            ? const Icon(Icons.visibility)
+                            : const Icon(Icons.visibility_off),
+                      ),
                     );
                   },
                 ),

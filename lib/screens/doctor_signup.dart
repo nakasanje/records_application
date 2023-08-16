@@ -3,12 +3,14 @@ import 'dart:typed_data';
 
 //import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import '../Services/doctor_auth.dart';
 import '../constants/custom_button.dart';
 import '../constants/custom_textfield.dart';
 import '../constants/global_variables.dart';
+import '../constants/images.dart';
 import '../constants/logo.dart';
 import '../constants/space.dart';
 import '../constants/utils.dart';
@@ -29,7 +31,6 @@ class _SignUpState extends State<SignUp> {
 
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
-  TextEditingController contactController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController comfirmPasswordController = TextEditingController();
   Uint8List? _image;
@@ -108,7 +109,11 @@ class _SignUpState extends State<SignUp> {
               key: _formKey,
               child: Column(
                 children: [
-                  const Logo(),
+                  const Space(),
+                  SvgPicture.asset(
+                    login_image,
+                    height: width * 0.20,
+                  ),
                   const Space(),
                   Stack(
                     children: [
@@ -224,27 +229,6 @@ class _SignUpState extends State<SignUp> {
                               ? const Icon(Icons.visibility)
                               : const Icon(Icons.visibility_off),
                         ),
-                      );
-                    },
-                  ),
-                  const Space(),
-                  StatefulBuilder(
-                    builder: (context, setState) {
-                      return MyTextField(
-                        validate: (value) {
-                          if (value!.isEmpty) {
-                            return "please Enter Your Contact";
-                          }
-                          if (value.length < 10) {
-                            return "contact is Short";
-                          }
-
-                          return null;
-                        },
-                        inputType: TextInputType.phone,
-                        label: "contact",
-                        obscure: false,
-                        controller: contactController,
                       );
                     },
                   ),

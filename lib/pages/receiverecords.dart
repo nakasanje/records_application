@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import '../methods/firestore.dart';
 import '../models/doctors.dart';
-
+import '../models/doctors.dart' as model;
 import '../models/patient.dart';
 import '../models/share.dart';
 import '../providers/doctor_provider.dart'; // Import the DoctorProvider
@@ -21,35 +21,15 @@ class ReceivingDoctorPage extends StatefulWidget {
 class _ReceivingDoctorPageState extends State<ReceivingDoctorPage> {
   List<SharedRecordModel> sharedRecords = [];
   FirestoreMethods firestore = FirestoreMethods();
-  late DoctorModel doctor;
+  late model.DoctorModel doctor;
   List<PatientModel> patients = [];
   List<PatientModel> filteredPatients = [];
-
-  getUser() async {
-    var snap = await firestore.doctorCollection.doc(firestore.doctor).get();
-    doctor = DoctorModel.fromSnap(snap);
-
-    fetchSharedRecords();
-  }
 
   @override
   void initState() {
     super.initState();
-    getUser();
     fetchPatients();
-    addData();
     fetchSharedRecords();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  addData() async {
-    DoctorProvider doctorProvider =
-        Provider.of<DoctorProvider>(context, listen: false);
-    await doctorProvider.refreshDoctor();
   }
 
   Future<void> fetchSharedRecords() async {
@@ -67,6 +47,14 @@ class _ReceivingDoctorPageState extends State<ReceivingDoctorPage> {
 
       setState(() {
         sharedRecords = recordsData;
+        // Filter shared records based on the patientId and receivingDoctorId
+        sharedRecords = sharedRecords
+            .where((record) => patients.any(
+                  (patient) =>
+                      record.patientId == patient.id &&
+                      record.receivingDoctorId == doctorId,
+                ))
+            .toList();
       });
     } catch (e) {
       print(e);
@@ -74,6 +62,9 @@ class _ReceivingDoctorPageState extends State<ReceivingDoctorPage> {
   }
 
   Future<void> fetchPatients() async {
+    final doctorProvider = Provider.of<DoctorProvider>(context, listen: false);
+    doctor = doctorProvider.getDoctor;
+
     try {
       final snapshot =
           await FirebaseFirestore.instance.collection('patients').get();
@@ -84,16 +75,13 @@ class _ReceivingDoctorPageState extends State<ReceivingDoctorPage> {
           name: doc['name'] ?? 'Unknown Name',
           age: doc['age'] ?? 'Unknown Age',
           testName: doc['testName'] ?? 'Unknown Test',
-          doctorName: '',
-          results: '',
+          doctorName: doc['doctorName'],
+          results: doc['results'],
+          doctorId: doctor.doctorId,
         );
       }).toList();
 
       // Filter patients based on the patientIds from shared records
-      filteredPatients = patientsData
-          .where((patient) =>
-              sharedRecords.any((record) => record.patientId == patient.id))
-          .toList();
 
       setState(() {
         patients = patientsData;
