@@ -11,7 +11,6 @@ import '../constants/custom_button.dart';
 import '../constants/custom_textfield.dart';
 import '../constants/global_variables.dart';
 import '../constants/images.dart';
-import '../constants/logo.dart';
 import '../constants/space.dart';
 import '../constants/utils.dart';
 

@@ -13,7 +13,6 @@ import 'package:records_application/screens/loginpage.dart';
 import 'package:records_application/screens/doctor_signup.dart';
 import 'package:provider/provider.dart';
 import 'package:records_application/screens/doctorlogin.dart';
-import 'package:records_application/screens/patient_dashboard.dart';
 import 'package:records_application/screens/receivingdoc.dart';
 import 'package:records_application/selection.dart';
 

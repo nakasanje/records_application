@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 
@@ -16,9 +17,10 @@ class UploadRecords extends StatefulWidget {
 }
 
 class _UploadRecordsState extends State<UploadRecords> {
-  // ... (existing code)
-
   String? _filePath;
+  String? _fileName;
+  String? _fileExtension;
+  // ... (existing code)
 
   Future<void> _pickFile() async {
     try {
@@ -26,7 +28,16 @@ class _UploadRecordsState extends State<UploadRecords> {
 
       if (result != null) {
         setState(() {
-          _filePath = result.files.single.path!;
+          if (kIsWeb) {
+            // For web, store the bytes of the selected file
+            _filePath = result.files.single.bytes!.toString();
+          } else {
+            // For mobile, store the path of the selected file
+
+            _filePath = result.files.single.path!;
+            _fileName = result.files.single.name;
+            _fileExtension = _fileName!.split('.').last;
+          }
         });
       }
     } catch (e) {
@@ -42,7 +53,9 @@ class _UploadRecordsState extends State<UploadRecords> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // ... (existing form fields)
+            Text('Selected file: $_fileName'),
+            Text(
+                'File Extension: $_fileExtension'), // ... (existing form fields)
 
             CustomButton(
               onTap: _pickFile,

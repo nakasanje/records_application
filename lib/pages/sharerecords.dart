@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,7 +11,6 @@ import '../models/doctors.dart' as model;
 import '../models/patient.dart';
 import '../models/patient_user.dart';
 import '../models/share.dart';
-import 'package:http/http.dart' as http;
 import '../providers/doctor_provider.dart';
 // Import the DoctorProvider
 // Import the DoctorModel
@@ -144,6 +142,7 @@ class _ShareRecordsState extends State<ShareRecords> {
     const approvalStatus = 'pending';
 
     final sharedRecord = SharedRecordModel(
+      receivingDoctorName: selectedReceivingDoctor!.username,
       patientId: selectedPatient!.id,
       sharingDoctorId: sharingDoctorId,
       receivingDoctorId: selectedReceivingDoctor!.doctorId,

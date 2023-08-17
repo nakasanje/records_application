@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -14,7 +13,6 @@ import '../constants/custom_textfield.dart';
 import '../constants/forgot_password_screen.dart';
 
 import '../constants/space.dart';
-import '../firebase_options.dart';
 import '../pages/pat_verification.dart';
 
 //import 'doctor_dashboard.dart';

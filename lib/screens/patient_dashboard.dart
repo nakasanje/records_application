@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:records_application/models/patient_user.dart';
-import 'package:records_application/models/patient_user.dart' as model;
 import '../Services/patient_auth.dart';
 import '../constants/custom_button.dart';
 import '../constants/space.dart';
@@ -29,10 +28,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
   FirestoreMethods firestore = FirestoreMethods();
   final AuthMethods _authMethods = AuthMethods();
   List<DoctorModel> receivingDoctorsFromSelectedPatient = [];
-  late Stream<QuerySnapshot> recordStream = FirebaseFirestore.instance
-      .collection('SharedRecords')
-      .where('id', isEqualTo: patientuser.patientId)
-      .snapshots();
+  late Stream<QuerySnapshot> recordStream;
 
   Variables variables = Variables();
 
@@ -49,6 +45,10 @@ class _PatientDashboardState extends State<PatientDashboard> {
     addData();
     getUser();
     fetchSharedRecords();
+    recordStream = FirebaseFirestore.instance
+        .collection('SharedRecords')
+        .where('id', isEqualTo: patientuser.patientId)
+        .snapshots();
   }
 
   @override
@@ -278,12 +278,19 @@ class _PatientDashboardState extends State<PatientDashboard> {
                       patientId: doc['patientId'],
                       receivingDoctorId: doc['receivingDoctorId'],
                       sharingDoctorId: doc['sharingDoctorId'],
+                      receivingDoctorName: doc['receivingDoctorName'],
                     );
                   }).toList();
+
+                  if (recordData.isEmpty) {
+                    return const Center(
+                        child: Text("You have no records yet."));
+                  }
                   return ListView.builder(
                     itemCount: recordData.length,
                     itemBuilder: (context, index) {
                       final record = recordData[index];
+
                       return ListTile(
                         title: Text(
                             'Do you Approve Sharing Your Record from Doctor ${record.sharingDoctorName}'),

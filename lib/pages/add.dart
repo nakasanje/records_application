@@ -23,7 +23,7 @@ class _AddPatientPageState extends State<AddPatientPage> {
   String _testName = '';
   String _results = '';
   String _doctorName = '';
-  String _id = '';
+  final String _id = '';
 
   @override
   void initState() {

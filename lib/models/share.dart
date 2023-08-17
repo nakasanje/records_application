@@ -5,6 +5,7 @@ class SharedRecordModel {
   final String id;
   final String sharingDoctorId;
   final String receivingDoctorId;
+  final String receivingDoctorName;
   final String sharingDoctorName;
   final String approvalStatus;
   // You can add more fields as needed
@@ -15,6 +16,7 @@ class SharedRecordModel {
     required this.id,
     required this.sharingDoctorId,
     required this.receivingDoctorId,
+    required this.receivingDoctorName,
     required this.approvalStatus,
     // Initialize other fields
   });
@@ -27,6 +29,7 @@ class SharedRecordModel {
       sharingDoctorId: snapshot['sharingDoctorId'],
       patientId: snapshot['patientId'],
       receivingDoctorId: snapshot['receivingDoctorId'],
+      receivingDoctorName: snapshot['receivingDoctorName'],
       approvalStatus: snapshot['approvalStatus'],
     );
   }
@@ -37,6 +40,7 @@ class SharedRecordModel {
         'patientId': patientId,
         'sharingDoctorId': sharingDoctorId,
         'receivingDoctorId': receivingDoctorId,
+        'receivingDoctorName': receivingDoctorName,
         'approvalStatus': approvalStatus,
         // Add other fields
       };

@@ -9,7 +9,6 @@ import 'package:records_application/screens/doctorlogin.dart';
 import '../constants/custom_button.dart';
 import '../methods/firestore.dart';
 import '../models/doctors.dart';
-import '../models/doctors.dart' as model;
 
 import '../pages/variables.dart';
 import '../providers/doctor_provider.dart';

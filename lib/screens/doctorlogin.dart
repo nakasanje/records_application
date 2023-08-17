@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -8,7 +7,6 @@ import '../constants/custom_button.dart';
 import '../constants/custom_textfield.dart';
 import '../constants/forgot_password_screen.dart';
 import '../constants/images.dart';
-import '../constants/logo.dart';
 import '../constants/space.dart';
 import '../constants/loading.dart';
 
