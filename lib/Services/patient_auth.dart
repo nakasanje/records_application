@@ -21,7 +21,7 @@ class AuthMethods {
 
     if (currentPatientUser != null) {
       DocumentSnapshot documentSnapshot = await _firestore
-          .collection("patient")
+          .collection("patientuser")
           .doc(currentPatientUser.uid)
           .get();
 
@@ -52,7 +52,7 @@ class AuthMethods {
         String photoUrl = await StorageMethods()
             .uploadImageToStorage('profilePics', file, false);
 
-        model.PatientUser doctor = model.PatientUser(
+        model.PatientUser patientuser = model.PatientUser(
           email: email,
           patientId: credentials.user!.uid,
           photoUrl: photoUrl,
@@ -61,9 +61,9 @@ class AuthMethods {
 
         //storing user to database
         await _firestore
-            .collection("patient")
-            .doc(doctor.patientId)
-            .set(doctor.toJson());
+            .collection("patientuser")
+            .doc(patientuser.patientId)
+            .set(patientuser.toJson());
 
         res = "success";
         //await sendEmailVerification()

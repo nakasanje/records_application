@@ -27,7 +27,7 @@ class _PatVerificationState extends State<PatVerification> {
     if (user != null) {
       final DocumentSnapshot<Map<String, dynamic>> snapshot =
           await FirebaseFirestore.instance
-              .collection('patient')
+              .collection('patientuser')
               .doc(user.uid)
               .get();
 

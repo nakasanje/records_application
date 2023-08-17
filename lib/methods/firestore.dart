@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:records_application/models/patient.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:records_application/models/share.dart';
 import '../models/doctors.dart';
 import '../models/patient_user.dart';
 import '../models/user.dart';
@@ -32,6 +33,7 @@ class FirestoreMethods {
   final String patient = 'patient';
   final String user = 'users';
   final String patientuser = 'patientuser';
+  final String record = 'SharedRecords';
 
   createUser({required UserModel model}) async {
     await userCollection.doc(model.uid).set(model.toJson());
@@ -49,6 +51,21 @@ class FirestoreMethods {
     await userCollection.doc(id).delete();
   }
 
+  void createPatientUserDocument(
+      String patientId, PatientUser patientuser) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('patientuser')
+          .doc(patientuser.patientId)
+          .set(patientuser.toJson());
+      // ignore: avoid_print
+      print('Patient document created successfully');
+    } catch (e) {
+      // ignore: avoid_print
+      print('Error creating patient document: $e');
+    }
+  }
+
   createPatientUser({required PatientUser model}) async {
     await patientuserCollection.doc(model.patientId).set(model.toJson());
   }
@@ -59,7 +76,7 @@ class FirestoreMethods {
   }
 
   Future<DocumentSnapshot> getPatientUser(String patientId) async {
-    return await patientuserCollection.doc(patient).get();
+    return await patientuserCollection.doc(patientuser).get();
   }
 
   deletePatientUser(String patientId) async {
@@ -115,6 +132,16 @@ class FirestoreMethods {
       'age': patient.age,
       'doctorName': patient.doctorName,
       'results': patient.results,
+    });
+  }
+
+  Future<void> updateSharedRecordModel(SharedRecordModel record) async {
+    await sharedrecordsCollection.doc(record.id).update({
+      'id': record.id,
+      'sharingDoctorId': record.sharingDoctorId,
+      'receivingDoctorId': record.receivingDoctorId,
+      'patientId': record.patientId,
+      'isApproved': record.approvalStatus,
     });
   }
 

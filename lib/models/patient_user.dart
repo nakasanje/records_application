@@ -39,7 +39,7 @@ class PatientUser {
 
   Map<String, dynamic> toJson() => {
         "username": username,
-        "uid": patientId,
+        "patientId": patientId,
         "email": email,
         "photoUrl": photoUrl,
       };

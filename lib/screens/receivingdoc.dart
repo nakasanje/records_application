@@ -7,10 +7,9 @@ import '../models/share.dart';
 import '../providers/doctor_provider.dart';
 
 class ReceivingDoctorsScreen extends StatefulWidget {
-  final String currentPatientId;
-
-  const ReceivingDoctorsScreen({Key? key, required this.currentPatientId})
-      : super(key: key);
+  const ReceivingDoctorsScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   _ReceivingDoctorsScreenState createState() => _ReceivingDoctorsScreenState();
@@ -88,7 +87,7 @@ class _ReceivingDoctorsScreenState extends State<ReceivingDoctorsScreen> {
       final receivingDoctorsData = snapshot.docs
           .map<DoctorModel>((doc) {
             return DoctorModel(
-              doctorId: doc['doctorId'],
+              doctorId: doc.id,
               username: doc['Unknown Name'],
               email: doc['Unknown Email'],
               photoUrl: '',
@@ -146,9 +145,5 @@ class _ReceivingDoctorsScreenState extends State<ReceivingDoctorsScreen> {
         ),
       ),
     );
-  }
-
-  void _revokeAccess(DoctorModel doctor) async {
-    // Implement the logic to revoke access here
   }
 }

@@ -1,10 +1,12 @@
+//import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:typed_data';
+
 //import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-//import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+//import 'package:records_application/constants/auth_methods.dart';
 
 import '../Services/patient_auth.dart';
 import '../constants/custom_button.dart';
@@ -14,10 +16,12 @@ import '../constants/images.dart';
 import '../constants/logo.dart';
 import '../constants/space.dart';
 import '../constants/utils.dart';
+
+import 'doctorlogin.dart';
 import 'loginpage.dart';
 
 class PSignUp extends StatefulWidget {
-  static const routeName = "/psignup";
+  static const routeName = "/signup";
 
   const PSignUp({super.key});
   @override
@@ -27,20 +31,18 @@ class PSignUp extends StatefulWidget {
 class _PSignUpState extends State<PSignUp> {
   late double width;
   late double height;
-  bool visible = false;
 
   TextEditingController nameController = TextEditingController();
-  TextEditingController usernameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
-  TextEditingController comfirmPasswordController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController comfirmPasswordController = TextEditingController();
   Uint8List? _image;
 
   final _formKey = GlobalKey<FormState>();
 
-  Future signUp() async {
+  void signUp() async {
     if (_formKey.currentState!.validate()) {
-      if (mounted) {
+      if (context.mounted) {
         showDialog(
             context: context,
             builder: (context) {
@@ -58,7 +60,7 @@ class _PSignUpState extends State<PSignUp> {
           file: _image!,
         );
 
-        if (mounted) {
+        if (context.mounted) {
           Navigator.pushNamed(context, LoginPage.routeName);
         }
       } else {
@@ -84,17 +86,14 @@ class _PSignUpState extends State<PSignUp> {
   void dispose() {
     super.dispose();
     nameController.dispose();
-    usernameController.dispose();
     emailController.dispose();
-    comfirmPasswordController.dispose();
     passwordController.dispose();
+    comfirmPasswordController.dispose();
   }
 
   void registerShowToast() =>
       Fluttertoast.showToast(msg: "Account created successfully");
-
   bool _isVisible = false;
-
   @override
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
@@ -102,150 +101,153 @@ class _PSignUpState extends State<PSignUp> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 79, 112, 87),
-        title: const Text(' PATIENT SIGNUP'),
+        title: const Text('PATIENT SIGNUP'),
       ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(left: 18, right: 18),
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
-            child: Column(
-              children: [
-                const Space(),
-                SvgPicture.asset(
-                  login_image,
-                  height: width * 0.20,
-                ),
-                const Space(),
-                Stack(
-                  children: [
-                    _image != null
-                        ? CircleAvatar(
-                            radius: 64,
-                            backgroundImage: MemoryImage(_image!),
-                            backgroundColor: GlobalVariables.primaryColor,
-                          )
-                        : const CircleAvatar(
-                            radius: 64,
-                            backgroundImage:
-                                AssetImage('assets/images/blank.png'),
-                            backgroundColor: Colors.deepPurpleAccent),
-                    Positioned(
-                      bottom: -10,
-                      left: 80,
-                      child: IconButton(
-                        onPressed: selectImage,
-                        icon: const Icon(Icons.add_a_photo),
-                      ),
-                    )
-                  ],
-                ),
-                const SizedBox(height: 20),
-                MyTextField(
-                  validate: (value) {
-                    if (value!.isEmpty) {
-                      return "Enter your name";
-                    }
-                    return null;
-                  },
-                  inputType: TextInputType.name,
-                  label: "Name",
-                  controller: nameController,
-                  obscure: false,
-                ),
-                const Space(),
-                MyTextField(
-                  validate: (value) {
-                    if (value!.isEmpty) {
-                      return "Please enter an Email";
-                    }
-                    if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
-                        .hasMatch(value)) {
-                      return "Invalid Email !";
-                    }
-                    return null;
-                  },
-                  inputType: TextInputType.emailAddress,
-                  label: "Email",
-                  controller: emailController,
-                  obscure: false,
-                ),
-                const Space(),
-                StatefulBuilder(
-                  builder: (context, setState) {
-                    return MyTextField(
-                      obscure: !_isVisible,
-                      validate: (value) {
-                        if (value!.isEmpty) {
-                          return "Please enter Password";
-                        }
-                        if (value.length < 6) {
-                          return "Password is Short";
-                        }
-                        return null;
-                      },
-                      inputType: TextInputType.text,
-                      label: "Password",
-                      controller: passwordController,
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _isVisible = !_isVisible;
-                          });
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  const Space(),
+                  SvgPicture.asset(
+                    login_image,
+                    height: width * 0.20,
+                  ),
+                  const Space(),
+                  Stack(
+                    children: [
+                      _image != null
+                          ? CircleAvatar(
+                              radius: 64,
+                              backgroundImage: MemoryImage(_image!),
+                              backgroundColor: GlobalVariables.primaryColor,
+                            )
+                          : const CircleAvatar(
+                              radius: 64,
+                              backgroundImage:
+                                  AssetImage('assets/images/blank.png'),
+                              backgroundColor: Colors.deepPurpleAccent),
+                      Positioned(
+                        bottom: -10,
+                        left: 80,
+                        child: IconButton(
+                          onPressed: selectImage,
+                          icon: const Icon(Icons.add_a_photo),
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  MyTextField(
+                    validate: (value) {
+                      if (value!.isEmpty) {
+                        return "Enter your name";
+                      }
+                      return null;
+                    },
+                    inputType: TextInputType.name,
+                    label: "Name",
+                    controller: nameController,
+                    obscure: false,
+                  ),
+                  const Space(),
+                  MyTextField(
+                    validate: (value) {
+                      if (value!.isEmpty) {
+                        return "Please enter an Email";
+                      }
+                      if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
+                          .hasMatch(value)) {
+                        return "Invalid Email !";
+                      }
+                      return null;
+                    },
+                    inputType: TextInputType.emailAddress,
+                    label: "Email",
+                    controller: emailController,
+                    obscure: false,
+                  ),
+                  const Space(),
+                  StatefulBuilder(
+                    builder: (context, setState) {
+                      return MyTextField(
+                        obscure: !_isVisible,
+                        validate: (value) {
+                          if (value!.isEmpty) {
+                            return "Please enter Password";
+                          }
+                          if (value.length < 6) {
+                            return "Password is Short";
+                          }
+                          return null;
                         },
-                        icon: _isVisible
-                            ? const Icon(Icons.visibility)
-                            : const Icon(Icons.visibility_off),
-                      ),
-                    );
-                  },
-                ),
-                const Space(),
-                StatefulBuilder(
-                  builder: (context, setState) {
-                    return MyTextField(
-                      obscure: !_isVisible,
-                      validate: (value) {
-                        if (value!.isEmpty) {
-                          return "Please Confirm your Password";
-                        }
-                        if (value.length < 6) {
-                          return "Password is Short";
-                        }
-                        if (comfirmPasswordController.text !=
-                            passwordController.text) {
-                          return "Passwords do not match";
-                        }
-                        return null;
-                      },
-                      inputType: TextInputType.text,
-                      label: "Comfirm Password",
-                      controller: comfirmPasswordController,
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _isVisible = !_isVisible;
-                          });
+                        inputType: TextInputType.text,
+                        label: "Password",
+                        controller: passwordController,
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _isVisible = !_isVisible;
+                            });
+                          },
+                          icon: _isVisible
+                              ? const Icon(Icons.visibility)
+                              : const Icon(Icons.visibility_off),
+                        ),
+                      );
+                    },
+                  ),
+                  const Space(),
+                  StatefulBuilder(
+                    builder: (context, setState) {
+                      return MyTextField(
+                        obscure: !_isVisible,
+                        validate: (value) {
+                          if (value!.isEmpty) {
+                            return "Please Confirm your Password";
+                          }
+                          if (value.length < 6) {
+                            return "Password is Short";
+                          }
+                          if (comfirmPasswordController.text !=
+                              passwordController.text) {
+                            return "Passwords do not match";
+                          }
+                          return null;
                         },
-                        icon: _isVisible
-                            ? const Icon(Icons.visibility)
-                            : const Icon(Icons.visibility_off),
-                      ),
-                    );
-                  },
-                ),
-                const Space(),
-                CustomButton(
-                  onTap: signUp,
-                  label: "Sign Up",
-                ),
-                const SizedBox(height: 20),
-                TextButton(
-                  onPressed: () =>
-                      Navigator.pushNamed(context, LoginPage.routeName),
-                  child: const Text("Already Have an Account"),
-                )
-              ],
+                        inputType: TextInputType.text,
+                        label: "Comfirm Password",
+                        controller: comfirmPasswordController,
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _isVisible = !_isVisible;
+                            });
+                          },
+                          icon: _isVisible
+                              ? const Icon(Icons.visibility)
+                              : const Icon(Icons.visibility_off),
+                        ),
+                      );
+                    },
+                  ),
+                  const Space(),
+                  CustomButton(
+                    onTap: signUp,
+                    label: "Sign Up",
+                  ),
+                  const SizedBox(height: 20),
+                  TextButton(
+                    onPressed: () =>
+                        Navigator.pushNamed(context, LoginPage.routeName),
+                    child: const Text("Already Have an Account"),
+                  )
+                ],
+              ),
             ),
           ),
         ),

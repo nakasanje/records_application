@@ -39,6 +39,7 @@ class _ReceivingDoctorPageState extends State<ReceivingDoctorPage> {
       final snapshot = await FirebaseFirestore.instance
           .collection('SharedRecords')
           .where('receivingDoctorId', isEqualTo: doctorId)
+          .where('approvalStatus', isEqualTo: 'approved')
           .get();
 
       final recordsData = snapshot.docs.map<SharedRecordModel>((doc) {

@@ -34,18 +34,6 @@ class _UploadRecordsState extends State<UploadRecords> {
     }
   }
 
-  void _uploadFile() {
-    if (_filePath != null) {
-      // Upload the file to Firebase Storage or Firestore
-      // Implement your upload logic here
-      // Display success or error messages
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a file first')),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,11 +54,6 @@ class _UploadRecordsState extends State<UploadRecords> {
             if (_filePath != null) Text('Selected file: $_filePath'),
 
             const Space(), // Add flexible space to center buttons
-
-            CustomButton(
-              onTap: _uploadFile,
-              label: 'Upload File',
-            ),
           ],
         ),
       ),

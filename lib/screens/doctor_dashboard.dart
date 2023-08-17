@@ -42,11 +42,6 @@ class _DashboardState extends State<Dashboard> {
     getUser();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   final userModel = FirebaseAuth.instance.currentUser;
   FirebaseAuth auth = FirebaseAuth.instance;
   //signout function
@@ -66,50 +61,54 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    model.DoctorModel doctor =
-        Provider.of<DoctorProvider>(context, listen: false).getDoctor;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Doctor Dashboard'),
         ),
         drawer: Drawer(
-          child: ListView(
-            children: [
-              UserAccountsDrawerHeader(
-                currentAccountPicture: InkWell(
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    clipBehavior: Clip.antiAlias,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
+          child: Consumer<DoctorProvider>(
+            builder: (context, doctorProvider, _) {
+              final doctor = doctorProvider.getDoctor;
+              return ListView(
+                children: [
+                  UserAccountsDrawerHeader(
+                    currentAccountPicture: InkWell(
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        clipBehavior: Clip.antiAlias,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                        ),
+                        child: Image.network(
+                          doctor.photoUrl,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
                     ),
-                    child: Image.network(
-                      doctor.photoUrl,
-                      fit: BoxFit.fill,
-                    ),
+                    accountName:
+                        Text(doctor.username), // Use the doctor's username
+                    accountEmail: Text(doctor.email), // Use the doctor's email
                   ),
-                ),
-                accountName: Text(doctor.username), // Use the doctor's username
-                accountEmail: Text(doctor.email), // Use the doctor's email
-              ),
-              ListTile(
-                leading: const Icon(CupertinoIcons.home),
-                title: const Text('Home'),
-                onTap: () {
-                  Navigator.pushNamed(context, '/home');
-                },
-              ),
-              const Divider(),
-              ListTile(
-                leading: const Icon(CupertinoIcons.settings),
-                title: const Text('Settings'),
-                onTap: () {
-                  Navigator.pushNamed(context, '/settings');
-                },
-              ),
-            ],
+                  ListTile(
+                    leading: const Icon(CupertinoIcons.home),
+                    title: const Text('Home'),
+                    onTap: () {
+                      Navigator.pushNamed(context, '/home');
+                    },
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(CupertinoIcons.settings),
+                    title: const Text('Settings'),
+                    onTap: () {
+                      Navigator.pushNamed(context, '/settings');
+                    },
+                  ),
+                ],
+              );
+            },
           ),
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -152,7 +151,12 @@ class _DashboardState extends State<Dashboard> {
         ),
         body: Column(
           children: [
-            Text('Welcome Doctor, ${doctor.username.toString()}'),
+            Consumer<DoctorProvider>(
+              builder: (context, doctorProvider, _) {
+                final doctor = doctorProvider.getDoctor;
+                return Text('Welcome Doctor, ${doctor.username.toString()}');
+              },
+            ),
             const Space(),
             CustomButton(
               onTap: () {

@@ -19,8 +19,4 @@ class DoctorProvider with ChangeNotifier {
 
     notifyListeners();
   }
-
-  Future<DoctorModel> getDoctorDetails() async {
-    return _doctor;
-  }
 }

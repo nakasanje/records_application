@@ -4,8 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:records_application/models/patient_user.dart';
 import 'package:records_application/models/patient_user.dart' as model;
-import 'package:records_application/screens/receivingdoc.dart';
-
 import '../Services/patient_auth.dart';
 import '../constants/custom_button.dart';
 import '../constants/space.dart';
@@ -31,16 +29,31 @@ class _PatientDashboardState extends State<PatientDashboard> {
   FirestoreMethods firestore = FirestoreMethods();
   final AuthMethods _authMethods = AuthMethods();
   List<DoctorModel> receivingDoctorsFromSelectedPatient = [];
+  late Stream<QuerySnapshot> recordStream = FirebaseFirestore.instance
+      .collection('SharedRecords')
+      .where('id', isEqualTo: patientuser.patientId)
+      .snapshots();
 
   Variables variables = Variables();
 
   late PatientUser patientuser;
+  getUser() async {
+    var snap =
+        await firestore.patientuserCollection.doc(firestore.patientuser).get();
+    patientuser = PatientUser.fromSnap(snap);
+  }
 
   @override
   void initState() {
     super.initState();
-
+    addData();
+    getUser();
     fetchSharedRecords();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   final userModel = FirebaseAuth.instance.currentUser;
@@ -54,12 +67,18 @@ class _PatientDashboardState extends State<PatientDashboard> {
         context, MaterialPageRoute(builder: (context) => const LoginPage()));
   }
 
+  addData() async {
+    PatientUserProvider patientuserProvider =
+        Provider.of<PatientUserProvider>(context, listen: false);
+    await patientuserProvider.refreshPatientUser();
+  }
+
   // Add this list
 
   Future<void> fetchSharedRecords() async {
-    final doctorProvider =
+    final patientuserProvider =
         Provider.of<PatientUserProvider>(context, listen: false);
-    patientuser = doctorProvider.getPatientUser;
+    patientuser = patientuserProvider.getPatientUser;
     try {
       final snapshot = await FirebaseFirestore.instance
           .collection('SharedRecords')
@@ -79,35 +98,15 @@ class _PatientDashboardState extends State<PatientDashboard> {
   }
 
   Future<void> _approveRecord(SharedRecordModel record) async {
-    try {
-      // Update the approval status of the record
-      await FirebaseFirestore.instance
-          .collection('SharedRecords')
-          .doc(record.id)
-          .update({'approvalStatus': 'approved'});
+    // Update the approval status of the record
+    await FirebaseFirestore.instance
+        .collection('SharedRecords')
+        .doc(record.id)
+        .update({'approvalStatus': 'approved'});
 
-      // Refresh the shared records list
+    // Refresh the shared records list
 
-      await fetchSharedRecords();
-
-      if (record.id == patientuser.patientId) {
-        String sharingDoctorToken = 'sharingDoctor_fcm_token_here';
-
-        await NotificationService().sendNotification(
-          title: 'Record Approved',
-          body: 'Your shared record has been approved.',
-          token: sharingDoctorToken, // Replace with the actual FCM token
-        );
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Record declined')),
-        );
-      } // ... Show snackbar ...
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error declining record: $error')),
-      ); // ... Handle error ...
-    }
+    // ... Handle error ...
   }
 
   Future<void> _declineRecord(SharedRecordModel record) async {
@@ -128,120 +127,83 @@ class _PatientDashboardState extends State<PatientDashboard> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error declining record: $error')),
       );
-      _fetchReceivingDoctorsFromSelectedPatient(record.id);
     }
   }
 
-  Future<void> _fetchReceivingDoctorsFromSelectedPatient(
-      String patientId) async {
-    // Fetch the list of receiving doctors for the selected patient
+  Future<void> _revokeAccessFromDoctor(SharedRecordModel record) async {
     try {
-      final snapshot = await FirebaseFirestore.instance
+      // Update the approval status of the record
+      await FirebaseFirestore.instance
           .collection('SharedRecords')
-          .where('id', isEqualTo: patientId)
-          .get();
+          .doc(record.id)
+          .update({'approvalStatus': 'revoked'});
 
-      final receivingDoctorsData = snapshot.docs
-          .map<DoctorModel>((doc) {
-            return DoctorModel(
-              doctorId: doc['receivingDoctorId'],
-              username: 'Unknown Name',
-              email: 'Unknown Email',
-              photoUrl: '',
-              // Other properties of the receiving doctor
-            );
-          })
-          .toSet() // Remove duplicates
-          .toList();
+      // Refresh the shared records list
+      await fetchSharedRecords();
 
-      // Navigate to the ReceivingDoctorsScreen with the list of doctors
-      // ignore: use_build_context_synchronously
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const ReceivingDoctorsScreen(
-            currentPatientId: '',
-          ),
-        ),
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Access revoked')),
       );
-    } catch (e) {
-      print(e);
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error revoking access: $error')),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    model.PatientUser patientuser =
-        Provider.of<PatientUserProvider>(context, listen: false).getPatientUser;
     return Scaffold(
       appBar: AppBar(title: const Text('Patient Dashboard')),
       drawer: Drawer(
-        child: ListView(
-          children: [
-            UserAccountsDrawerHeader(
-              currentAccountPicture: InkWell(
-                child: Container(
-                  width: 50,
-                  height: 50,
-                  clipBehavior: Clip.antiAlias,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                  ),
-                  child: Image.network(
-                    patientuser.photoUrl,
-                    fit: BoxFit.fill,
-                  ),
-                ),
-              ),
-              accountName:
-                  Text(patientuser.username), // Use the doctor's username
-              accountEmail: Text(patientuser.email), // Use the doctor's email
-            ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Home'),
-              onTap: () {
-                Navigator.pushNamed(context, '/home');
-              },
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('Doctors with your records:'),
-              onTap: () {
-                _fetchReceivingDoctorsFromSelectedPatient(
-                    patientuser.patientId);
-              },
-            ),
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: receivingDoctorsFromSelectedPatient.length,
-              itemBuilder: (context, index) {
-                final doctor = receivingDoctorsFromSelectedPatient[index];
-                return ListTile(
-                  title: Text('Doctor ID: ${doctor.doctorId}'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ReceivingDoctorsScreen(
-                          currentPatientId: '',
-                        ),
+        child: Consumer<PatientUserProvider>(
+          builder: (context, patientuserProvider, _) {
+            final patientuser = patientuserProvider.getPatientUser;
+            return ListView(
+              children: [
+                UserAccountsDrawerHeader(
+                  currentAccountPicture: InkWell(
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
                       ),
-                    );
+                      child: Image.network(
+                        patientuser.photoUrl,
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                  ),
+                  accountName:
+                      Text(patientuser.username), // Use the doctor's username
+                  accountEmail:
+                      Text(patientuser.email), // Use the doctor's email
+                ),
+                ListTile(
+                  leading: const Icon(Icons.home),
+                  title: const Text('Home'),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/home');
                   },
-                  // You can display more doctor properties here
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
-              onTap: () {
-                Navigator.pushNamed(context, '/settings');
-              },
-            ),
-          ],
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.person),
+                  title: const Text('Doctors with your records:'),
+                  onTap: () {},
+                ),
+                ListTile(
+                  leading: const Icon(Icons.settings),
+                  title: const Text('Settings'),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/settings');
+                  },
+                ),
+              ],
+            );
+          },
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -277,7 +239,12 @@ class _PatientDashboardState extends State<PatientDashboard> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Text('Welcome ${patientuser.username.toString()}'),
+            Consumer<PatientUserProvider>(
+              builder: (context, patientuserProvider, _) {
+                final patientuser = patientuserProvider.getPatientUser;
+                return Text('Welcome ${patientuser.username.toString()}');
+              },
+            ),
             const Space(),
             CustomButton(
               onTap: () {
@@ -292,31 +259,88 @@ class _PatientDashboardState extends State<PatientDashboard> {
             ),
             // Display shared records
             Expanded(
-              child: ListView.builder(
-                itemCount: sharedRecords.length,
-                itemBuilder: (context, index) {
-                  final record = sharedRecords[index];
-                  return ListTile(
-                    title:
-                        Text('Record from Doctor: ${record.sharingDoctorId}'),
-                    subtitle: Text('Approval Status: ${record.approvalStatus}'),
-                    trailing: record.approvalStatus == 'pending'
-                        ? Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                onPressed: () => _approveRecord(record),
-                                icon: const Icon(Icons.check,
-                                    color: Colors.green),
-                              ),
-                              IconButton(
-                                onPressed: () => _declineRecord(record),
-                                icon:
-                                    const Icon(Icons.close, color: Colors.red),
-                              ),
-                            ],
-                          )
-                        : null,
+              child: StreamBuilder<QuerySnapshot>(
+                stream: recordStream,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
+                  final recordData =
+                      snapshot.data!.docs.map<SharedRecordModel>((doc) {
+                    return SharedRecordModel(
+                      sharingDoctorName: doc['sharingDoctorName'],
+                      approvalStatus: doc['approvalStatus'],
+                      id: doc.id,
+                      patientId: doc['patientId'],
+                      receivingDoctorId: doc['receivingDoctorId'],
+                      sharingDoctorId: doc['sharingDoctorId'],
+                    );
+                  }).toList();
+                  return ListView.builder(
+                    itemCount: recordData.length,
+                    itemBuilder: (context, index) {
+                      final record = recordData[index];
+                      return ListTile(
+                        title: Text(
+                            'Do you Approve Sharing Your Record from Doctor ${record.sharingDoctorName}'),
+                        subtitle:
+                            Text('Approval Status: ${record.approvalStatus}'),
+                        onTap: () {
+                          if (record.approvalStatus == 'approved') {
+                            // Show a dialog to confirm revoking access
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Revoke Access'),
+                                  content: Text(
+                                      'Do you want to revoke access to the record from Doctor ${record.sharingDoctorName}?'),
+                                  actions: [
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                            .pop(); // Close the dialog
+                                        _revokeAccessFromDoctor(
+                                            record); // Revoke access
+                                      },
+                                      child: const Text('Revoke'),
+                                    ),
+                                    OutlinedButton(
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                            .pop(); // Close the dialog
+                                      },
+                                      child: const Text('Cancel'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }
+                        },
+                        trailing: record.approvalStatus == 'pending'
+                            ? Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    onPressed: () => _approveRecord(record),
+                                    icon: const Icon(Icons.check,
+                                        color: Colors.green),
+                                  ),
+                                  IconButton(
+                                    onPressed: () => _declineRecord(record),
+                                    icon: const Icon(Icons.close,
+                                        color: Colors.red),
+                                  ),
+                                ],
+                              )
+                            : null,
+                      );
+                    },
                   );
                 },
               ),

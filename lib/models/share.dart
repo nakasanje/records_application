@@ -5,11 +5,13 @@ class SharedRecordModel {
   final String id;
   final String sharingDoctorId;
   final String receivingDoctorId;
+  final String sharingDoctorName;
   final String approvalStatus;
   // You can add more fields as needed
 
   SharedRecordModel({
     required this.patientId,
+    required this.sharingDoctorName,
     required this.id,
     required this.sharingDoctorId,
     required this.receivingDoctorId,
@@ -20,6 +22,7 @@ class SharedRecordModel {
   static SharedRecordModel fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
     return SharedRecordModel(
+      sharingDoctorName: snapshot['sharingDoctorName'],
       id: snap.id, // Set the id from the document ID
       sharingDoctorId: snapshot['sharingDoctorId'],
       patientId: snapshot['patientId'],
@@ -30,6 +33,7 @@ class SharedRecordModel {
 
   Map<String, dynamic> toJson() => {
         'id': id,
+        'sharingDoctorName': sharingDoctorName,
         'patientId': patientId,
         'sharingDoctorId': sharingDoctorId,
         'receivingDoctorId': receivingDoctorId,

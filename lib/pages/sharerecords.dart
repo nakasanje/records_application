@@ -47,7 +47,7 @@ class _ShareRecordsState extends State<ShareRecords> {
   Future<void> fetchPatientsToApprove() async {
     try {
       final snapshot =
-          await FirebaseFirestore.instance.collection('patient').get();
+          await FirebaseFirestore.instance.collection('patientuser').get();
 
       final patientuser = snapshot.docs.map<PatientUser>((doc) {
         return PatientUser(
@@ -121,31 +121,6 @@ class _ShareRecordsState extends State<ShareRecords> {
     }
   }
 
-  Future<void> sendMessage(String token, String title, String body) async {
-    final message = {
-      'notification': {
-        'title': title,
-        'body': body,
-      },
-      'to': token,
-    };
-
-    final response = await http.post(
-      Uri.parse('https://fcm.googleapis.com/fcm/send'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer your_server_key_here',
-      },
-      body: jsonEncode(message),
-    );
-
-    if (response.statusCode == 200) {
-      print('Message sent successfully');
-    } else {
-      print('Failed to send message: ${response.body}');
-    }
-  }
-
   Future<void> _shareRecord() async {
     if (selectedPatient == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -165,6 +140,7 @@ class _ShareRecordsState extends State<ShareRecords> {
     final DoctorModel sharingDoctor = doctorProvider.getDoctor;
 
     final sharingDoctorId = sharingDoctor.doctorId;
+    final sharingDoctorName = sharingDoctor.username;
     const approvalStatus = 'pending';
 
     final sharedRecord = SharedRecordModel(
@@ -173,21 +149,13 @@ class _ShareRecordsState extends State<ShareRecords> {
       receivingDoctorId: selectedReceivingDoctor!.doctorId,
       approvalStatus: approvalStatus,
       id: selectedpatientsToApprove!.patientId,
+      sharingDoctorName: sharingDoctorName,
     );
 
     try {
       await FirebaseFirestore.instance
           .collection('SharedRecords')
           .add(sharedRecord.toJson());
-
-      // Get the patient's FCM token from your data
-      String patientToken = ''; // Replace with actual token
-
-      await sendMessage(
-        patientToken,
-        'Record Shared',
-        'Your doctor has shared your records.',
-      );
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Record sharing request sent')),

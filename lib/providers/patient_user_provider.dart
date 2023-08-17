@@ -20,8 +20,4 @@ class PatientUserProvider with ChangeNotifier {
 
     notifyListeners();
   }
-
-  Future<PatientUser> getPatientUserDetails() async {
-    return _patientuser;
-  }
 }
