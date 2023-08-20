@@ -9,6 +9,7 @@ class PatientUserProvider with ChangeNotifier {
     patientId: "",
     username: "",
     photoUrl: "",
+    role: "",
   );
   final AuthMethods _authMethods = AuthMethods();
 

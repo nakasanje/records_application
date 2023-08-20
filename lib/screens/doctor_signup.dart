@@ -50,11 +50,11 @@ class _SignUpState extends State<SignUp> {
 
       if (_image != null) {
         await AuthMethod().signUpDoctor(
-          name: nameController.text,
-          email: emailController.text,
-          password: passwordController.text,
-          file: _image!,
-        );
+            name: nameController.text,
+            email: emailController.text,
+            password: passwordController.text,
+            file: _image!,
+            role: 'doctor');
 
         if (context.mounted) {
           Navigator.pushNamed(context, DocLoginPage.routeName);

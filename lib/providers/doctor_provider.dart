@@ -8,6 +8,7 @@ class DoctorProvider with ChangeNotifier {
     doctorId: "",
     username: "",
     photoUrl: "",
+    role: "",
   );
   final AuthMethod _authMethod = AuthMethod();
 

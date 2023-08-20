@@ -1,16 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DoctorModel {
+  static const admin = "admin";
+  static const doctor = "doctor";
+
   final String username;
   final String email;
   final String photoUrl;
   final String doctorId;
+  final String role;
 
   DoctorModel({
     required this.email,
     required this.doctorId,
     required this.photoUrl,
     required this.username,
+    required this.role,
   });
 
   factory DoctorModel.fromSnap(DocumentSnapshot snap) {
@@ -23,6 +28,7 @@ class DoctorModel {
         doctorId: "",
         username: "",
         photoUrl: "",
+        role: "",
       );
     }
 
@@ -31,6 +37,7 @@ class DoctorModel {
       doctorId: data["doctorId"] ?? "",
       username: data["username"] ?? "",
       photoUrl: data["photoUrl"] ?? "",
+      role: data["role"] ?? doctor,
     );
   }
 
@@ -39,5 +46,6 @@ class DoctorModel {
         "doctorId": doctorId,
         "email": email,
         'photoUrl': photoUrl,
+        "role": role,
       };
 }

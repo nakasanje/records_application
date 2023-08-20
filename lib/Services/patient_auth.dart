@@ -40,6 +40,7 @@ class AuthMethods {
     required String email,
     required String password,
     required Uint8List file,
+    required String role,
   }) async {
     String res = "Some error Occurred";
     try {
@@ -57,6 +58,7 @@ class AuthMethods {
           patientId: credentials.user!.uid,
           photoUrl: photoUrl,
           username: name,
+          role: 'patient',
         );
 
         //storing user to database
@@ -98,6 +100,7 @@ class AuthMethods {
           email: email,
           password: password,
         );
+
         res = "success";
       } else {
         res = "Please enter all the fields";

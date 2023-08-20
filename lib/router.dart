@@ -1,9 +1,13 @@
+import 'dart:js';
+
 import 'package:flutter/material.dart';
+import 'package:records_application/pages/edit.dart';
 import 'package:records_application/pages/receiverecords.dart';
 import 'package:records_application/pages/uploadrecords.dart';
 import 'package:records_application/pages/verification.dart';
 import 'package:records_application/screens/doctorlogin.dart';
 import 'package:records_application/screens/patientsignup.dart';
+import 'models/patient.dart';
 import 'pages/patientrecords.dart';
 import 'pages/sharerecords.dart';
 import 'screens/loginpage.dart';
@@ -34,6 +38,14 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
 
     case ReceivingDoctorPage.routeName:
       return MaterialPageRoute(builder: (_) => const ReceivingDoctorPage());
+
+    case EditPatientDetails.routeName:
+      return MaterialPageRoute(
+          builder: (_) => EditPatientDetails(
+                patient: ModalRoute.of(context as BuildContext)!
+                    .settings
+                    .arguments as PatientModel,
+              ));
 
     case PatientRecords.routeName:
       return MaterialPageRoute(builder: (_) => const PatientRecords());

@@ -33,7 +33,7 @@ class _HomeGridState extends State<HomeGrid> {
       "route": ShareRecords.routeName,
     },
     {
-      "title": "RECEIVE RECORDS",
+      "title": "RECEIVED RECORDS",
       "image": "assets/images/receive.jpeg",
       "route": ReceivingDoctorPage.routeName,
     },

@@ -37,14 +37,22 @@ class _PatientDashboardState extends State<PatientDashboard> {
     var snap =
         await firestore.patientuserCollection.doc(firestore.patientuser).get();
     patientuser = PatientUser.fromSnap(snap);
+    await fetchSharedRecords();
   }
 
   @override
   void initState() {
     super.initState();
     addData();
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user != null) {
+        // Fetch shared records immediately after successful login
+        fetchSharedRecords();
+      }
+    });
     getUser();
     fetchSharedRecords();
+
     recordStream = FirebaseFirestore.instance
         .collection('SharedRecords')
         .where('id', isEqualTo: patientuser.patientId)
@@ -70,6 +78,8 @@ class _PatientDashboardState extends State<PatientDashboard> {
   addData() async {
     PatientUserProvider patientuserProvider =
         Provider.of<PatientUserProvider>(context, listen: false);
+    await fetchSharedRecords();
+
     await patientuserProvider.refreshPatientUser();
   }
 
@@ -185,7 +195,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
                   leading: const Icon(Icons.home),
                   title: const Text('Home'),
                   onTap: () {
-                    Navigator.pushNamed(context, '/home');
+                    Navigator.pushNamed(context, '/homes');
                   },
                 ),
                 const Divider(),
@@ -198,7 +208,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
                   leading: const Icon(Icons.settings),
                   title: const Text('Settings'),
                   onTap: () {
-                    Navigator.pushNamed(context, '/settings');
+                    Navigator.pushNamed(context, '/setting');
                   },
                 ),
               ],
@@ -290,10 +300,16 @@ class _PatientDashboardState extends State<PatientDashboard> {
                     itemCount: recordData.length,
                     itemBuilder: (context, index) {
                       final record = recordData[index];
-
                       return ListTile(
-                        title: Text(
-                            'Do you Approve Sharing Your Record from Doctor ${record.sharingDoctorName}'),
+                        title: Consumer<PatientUserProvider>(
+                          builder: (context, patientuserProvider, _) {
+                            final patientuser =
+                                patientuserProvider.getPatientUser;
+                            return Text(
+                              'Hey ${patientuser.username}, do you Approve Sharing Your Record from Doctor ${record.sharingDoctorName} to Doctor ${record.receivingDoctorName}',
+                            );
+                          },
+                        ),
                         subtitle:
                             Text('Approval Status: ${record.approvalStatus}'),
                         onTap: () {
@@ -305,7 +321,8 @@ class _PatientDashboardState extends State<PatientDashboard> {
                                 return AlertDialog(
                                   title: const Text('Revoke Access'),
                                   content: Text(
-                                      'Do you want to revoke access to the record from Doctor ${record.sharingDoctorName}?'),
+                                    'Do you want to revoke access to the record from Doctor ${record.sharingDoctorName}?',
+                                  ),
                                   actions: [
                                     ElevatedButton(
                                       onPressed: () {

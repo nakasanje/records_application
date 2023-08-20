@@ -52,6 +52,7 @@ class _PSignUpState extends State<PSignUp> {
 
       if (_image != null) {
         await AuthMethods().signUpPatientUser(
+          role: 'patient',
           name: nameController.text,
           email: emailController.text,
           password: passwordController.text,

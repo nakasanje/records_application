@@ -35,6 +35,7 @@ class AuthMethod {
     required String email,
     required String password,
     required Uint8List file,
+    required String role,
   }) async {
     String res = "Some error Occurred";
     try {
@@ -52,6 +53,7 @@ class AuthMethod {
           doctorId: credentials.user!.uid,
           photoUrl: photoUrl,
           username: name,
+          role: "doctor",
         );
 
         //storing user to database

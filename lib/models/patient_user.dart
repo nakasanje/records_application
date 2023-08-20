@@ -8,12 +8,14 @@ class PatientUser {
   final String patientId;
   final String email;
   final String photoUrl;
+  final String role;
 
   PatientUser({
     required this.email,
     required this.patientId,
     required this.photoUrl,
     required this.username,
+    required this.role,
   });
 
   factory PatientUser.fromSnap(DocumentSnapshot snap) {
@@ -26,6 +28,7 @@ class PatientUser {
         patientId: "",
         username: "",
         photoUrl: "",
+        role: "",
       );
     }
 
@@ -34,6 +37,7 @@ class PatientUser {
       patientId: data["patientId"] ?? "",
       username: data["username"] ?? "",
       photoUrl: data["photoUrl"] ?? "",
+      role: data["role"] ?? patient,
     );
   }
 
@@ -41,6 +45,7 @@ class PatientUser {
         "username": username,
         "patientId": patientId,
         "email": email,
+        "role": role,
         "photoUrl": photoUrl,
       };
 }

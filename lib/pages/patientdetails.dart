@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:records_application/constants/space.dart';
+import '../constants/custom_button.dart';
 import '../models/patient.dart';
+import 'edit.dart';
 
 class PatientDetails extends StatelessWidget {
   const PatientDetails({super.key});
@@ -33,8 +36,19 @@ class PatientDetails extends StatelessWidget {
             const SizedBox(height: 10),
             Text('Results: ${patient.results}'),
             const SizedBox(height: 20),
-            // You can add more patient-related information here
+            const Space(),
+            CustomButton(
+              label: 'Edit',
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  EditPatientDetails.routeName,
+                  arguments: patient, // Pass the patient to the edit page
+                );
+              },
+            ),
           ],
+          // You can add more patient-related information here
         ),
       ),
     );

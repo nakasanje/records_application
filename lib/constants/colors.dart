@@ -7,5 +7,5 @@ const colorGrey = Color(0xFFADACAC);
 const cardColor = Color.fromARGB(255, 198, 165, 203);
 const hintColor = Color(0xFF455A64);
 const errorColor = Color.fromARGB(255, 214, 61, 171);
-const colorWhite = Color.fromARGB(255, 214, 157, 229);
-const fillColor = Color.fromARGB(255, 157, 118, 230);
+const colorWhite = Color(0xFFFFFFFF);
+const fillColor = Color.fromARGB(255, 176, 156, 212);

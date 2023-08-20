@@ -118,9 +118,21 @@ class FirestoreMethods {
     await patientCollection.doc(model.id).set(model.toJson());
   }
 
-  updatePatient(
-      {required Map<String, dynamic> data, required String id}) async {
-    await patientCollection.doc(id).update(data);
+  Future<void> updatePatient(PatientModel patient) async {
+    try {
+      await firestore.collection('patients').doc(patient.id).update({
+        'name': patient.name,
+        'age': patient.age,
+        'testName': patient.testName,
+        'doctorName': patient.doctorName,
+        'results': patient.results,
+        'doctorId': patient.doctorId,
+        // Update other patient details as needed
+      });
+      print('Patient details updated successfully');
+    } catch (e) {
+      print('Error updating patient details: $e');
+    }
   }
 
   Future<void> addPatient(PatientModel patient) async {

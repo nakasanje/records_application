@@ -1,8 +1,10 @@
+// ignore_for_file: depend_on_referenced_packages
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
-import 'package:records_application/constants/space.dart';
+
+import 'package:search_choices/search_choices.dart';
 
 import '../constants/custom_button.dart';
 
@@ -34,6 +36,9 @@ class _ShareRecordsState extends State<ShareRecords> {
   List<PatientUser> patientsToApprove = [];
   late model.DoctorModel doctor;
 
+  TextEditingController patientSearchController = TextEditingController();
+  TextEditingController doctorSearchController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -49,6 +54,7 @@ class _ShareRecordsState extends State<ShareRecords> {
 
       final patientuser = snapshot.docs.map<PatientUser>((doc) {
         return PatientUser(
+          role: doc['role'],
           patientId: doc.id,
           username: doc['username'] ?? 'Unknown Name',
           email: doc['email'] ?? 'Unknown Email',
@@ -107,6 +113,7 @@ class _ShareRecordsState extends State<ShareRecords> {
           username: doc['username'] ?? 'Unknown Name',
           email: doc['email'] ?? 'Unknown Email',
           photoUrl: '',
+          role: "doctor",
           // Other properties of the receiving doctor
         );
       }).toList();
@@ -172,6 +179,24 @@ class _ShareRecordsState extends State<ShareRecords> {
     }
   }
 
+  void _onSearchTextChanged(String searchText) {
+    setState(() {
+      // Use the filter functions here or any other logic you prefer
+      selectedPatient = patients.firstWhere(
+        (patient) =>
+            patient.name.toLowerCase().contains(searchText.toLowerCase()),
+      );
+      selectedReceivingDoctor = receivingDoctor.firstWhere(
+        (doctor) =>
+            doctor.email.toLowerCase().contains(searchText.toLowerCase()),
+      );
+      selectedpatientsToApprove = patientsToApprove.firstWhere(
+        (patientUser) =>
+            patientUser.email.toLowerCase().contains(searchText.toLowerCase()),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -180,65 +205,46 @@ class _ShareRecordsState extends State<ShareRecords> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            DropdownButton<PatientModel>(
+// Inside _ShareRecordsState class
+
+            SearchChoices.single(
               value: selectedPatient,
-              onChanged: (patient) {
-                setState(() {
-                  selectedPatient = patient;
-                });
-              },
-              items: patients.map<DropdownMenuItem<PatientModel>>(
-                (PatientModel patient) {
-                  return DropdownMenuItem<PatientModel>(
-                    value: patient,
-                    child: Text(patient.name),
-                  );
-                },
-              ).toList(),
-              hint: const Text('Select patient records '),
+              items: patients.map((PatientModel patient) {
+                return DropdownMenuItem(
+                  value: patient,
+                  child: Text(patient.name),
+                );
+              }).toList(),
+              onChanged: _onSearchTextChanged,
+              displayClearIcon: false, // Optionally remove the clear icon
+              hint: "Select patient records",
             ),
 
-            const Space(),
-
-            DropdownButton<DoctorModel>(
+            SearchChoices.single(
               value: selectedReceivingDoctor,
-              onChanged: (doctor) {
-                setState(() {
-                  selectedReceivingDoctor = doctor;
-                });
-              },
-              items: receivingDoctor.map<DropdownMenuItem<DoctorModel>>(
-                (DoctorModel doctor) {
-                  return DropdownMenuItem<DoctorModel>(
-                    value: doctor,
-                    child: Text(doctor.email),
-                  );
-                },
-              ).toList(),
-              hint: const Text('Select receiving doctor'),
+              items: receivingDoctor.map((DoctorModel doctor) {
+                return DropdownMenuItem(
+                  value: doctor,
+                  child: Text(doctor.email),
+                );
+              }).toList(),
+              onChanged: _onSearchTextChanged,
+              displayClearIcon: false, // Optionally remove the clear icon
+              hint: "Select receiving doctor",
             ),
 
-            const Space(),
-
-            DropdownButton<PatientUser>(
+            SearchChoices.single(
               value: selectedpatientsToApprove,
-              onChanged: (patientuser) {
-                setState(() {
-                  selectedpatientsToApprove = patientuser;
-                });
-              },
-              items: patientsToApprove.map<DropdownMenuItem<PatientUser>>(
-                (PatientUser patientuser) {
-                  return DropdownMenuItem<PatientUser>(
-                    value: patientuser,
-                    child: Text(patientuser.email),
-                  );
-                },
-              ).toList(),
-              hint: const Text('Select patient to approve'),
+              items: patientsToApprove.map((PatientUser patientuser) {
+                return DropdownMenuItem(
+                  value: patientuser,
+                  child: Text(patientuser.email),
+                );
+              }).toList(),
+              onChanged: _onSearchTextChanged,
+              displayClearIcon: false, // Optionally remove the clear icon
+              hint: "Select patient to approve",
             ),
-
-            //
 
             const SizedBox(height: 16),
             CustomButton(
@@ -249,5 +255,19 @@ class _ShareRecordsState extends State<ShareRecords> {
         ),
       ),
     );
+  }
+
+  List<PatientModel> _filterPatients(String query) {
+    return patients.where((patient) {
+      final name = patient.name.toLowerCase();
+      return name.contains(query.toLowerCase());
+    }).toList();
+  }
+
+  List<DoctorModel> _filterDoctors(String query) {
+    return receivingDoctor.where((doctor) {
+      final email = doctor.email.toLowerCase();
+      return email.contains(query.toLowerCase());
+    }).toList();
   }
 }

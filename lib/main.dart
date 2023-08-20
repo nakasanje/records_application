@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:records_application/pages/edit.dart';
 import 'package:records_application/pages/patientdetails.dart';
 import 'package:records_application/pages/patientrecords.dart';
 import 'package:records_application/pages/receiverecords.dart';
@@ -17,10 +18,13 @@ import 'package:records_application/screens/receivingdoc.dart';
 import 'package:records_application/selection.dart';
 
 import 'firebase_options.dart';
+import 'models/patient.dart';
 import 'navbarpages/notifications.dart';
+import 'navbarpages/pat_settings.dart';
 import 'navbarpages/settings.dart';
 import 'providers/doctor_provider.dart';
 import 'screens/doctor_dashboard.dart';
+import 'screens/patient_dashboard.dart';
 import 'screens/patientsignup.dart';
 
 void main() async {
@@ -68,12 +72,19 @@ class MyApp extends StatelessWidget {
           ShareRecords.routeName: (context) => const ShareRecords(),
           UploadRecords.routeName: (context) => const UploadRecords(),
           Verification.routeName: (context) => const Verification(),
+          EditPatientDetails.routeName: (context) => EditPatientDetails(
+                patient:
+                    ModalRoute.of(context)!.settings.arguments as PatientModel,
+              ),
+
           ReceivingDoctorPage.routeName: (context) =>
               const ReceivingDoctorPage(),
           //'/home': (context) => const HomePage(),
           '/settings': (context) => const Settings2(),
+          '/setting': (context) => const Settings(),
           '/notifications': (context) => const Notifications(),
           '/home': (context) => const Dashboard(),
+          '/homes': (context) => const PatientDashboard(),
           '/PatientDetails': (context) => const PatientDetails(),
           '/ReceivingDoctorScreen': (context) => const ReceivingDoctorsScreen()
         },
