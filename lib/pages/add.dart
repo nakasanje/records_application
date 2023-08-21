@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart';
@@ -5,7 +6,9 @@ import 'package:provider/provider.dart';
 import '../constants/custom_button.dart';
 import '../methods/firestore.dart';
 import '../models/patient.dart';
+import '../models/patient_user.dart';
 import '../providers/doctor_provider.dart';
+import '../providers/patient_user_provider.dart';
 
 class AddPatientPage extends StatefulWidget {
   const AddPatientPage({Key? key}) : super(key: key);
@@ -17,17 +20,19 @@ class AddPatientPage extends StatefulWidget {
 class _AddPatientPageState extends State<AddPatientPage> {
   final _formKey = GlobalKey<FormState>();
   final FirestoreMethods firestore = FirestoreMethods();
+  List<PatientUser> patientsToApprove = [];
   late String _doctorId; // Make _id non-nullable
   String _name = '';
   int _age = 0;
   String _testName = '';
   String _results = '';
   String _doctorName = '';
-  final String _id = '';
+  late String _id;
 
   @override
   void initState() {
     super.initState();
+    fetchPatientsToApprove();
     _doctorId =
         Provider.of<DoctorProvider>(context, listen: false).getDoctor.doctorId;
   }
@@ -53,6 +58,30 @@ class _AddPatientPageState extends State<AddPatientPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Patient added successfully')),
       );
+    }
+  }
+
+  Future<void> fetchPatientsToApprove() async {
+    try {
+      final snapshot =
+          await FirebaseFirestore.instance.collection('patientuser').get();
+
+      final patientuser = snapshot.docs.map<PatientUser>((doc) {
+        return PatientUser(
+          role: doc['role'],
+          patientId: doc.id,
+          username: doc['username'] ?? 'Unknown Name',
+          email: doc['email'] ?? 'Unknown Email',
+          photoUrl: '',
+          // Other properties of the receiving doctor
+        );
+      }).toList();
+
+      setState(() {
+        patientsToApprove = patientuser;
+      });
+    } catch (e) {
+      print(e);
     }
   }
 

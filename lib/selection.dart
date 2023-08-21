@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:records_application/screens/doctorlogin.dart';
+import 'package:records_application/screens/loginpage.dart';
 import 'package:records_application/screens/patientsignup.dart';
 import 'package:records_application/screens/doctor_signup.dart';
 
@@ -21,7 +23,7 @@ class SelectionPage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const SignUp()),
+                  MaterialPageRoute(builder: (context) => const DocLoginPage()),
                 );
               },
               label: 'Signup as Doctor',
@@ -31,7 +33,7 @@ class SelectionPage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const PSignUp()),
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
                 );
               },
               label: 'Signup as Patient',

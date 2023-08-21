@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:records_application/screens/doctorlogin.dart';
+//import 'package:records_application/screens/doctorlogin.dart';
 
 import '../Services/patient_auth.dart';
 import '../constants/custom_button.dart';
+import '../screens/loginpage.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -18,8 +19,8 @@ class _SettingsState extends State<Settings> {
   Future<void> signOut() async {
     await _authMethods.signOut();
     if (context.mounted) {
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => const DocLoginPage()));
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const LoginPage()));
     }
   }
 

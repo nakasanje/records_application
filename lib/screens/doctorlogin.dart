@@ -39,6 +39,7 @@ class _DocLoginPageState extends State<DocLoginPage> {
 
   Future signIn() async {
     if (_formKey.currentState!.validate()) {
+      FocusManager.instance.primaryFocus!.unfocus();
       setState(() {
         loading = true;
       });

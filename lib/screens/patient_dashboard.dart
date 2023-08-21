@@ -37,53 +37,17 @@ class _PatientDashboardState extends State<PatientDashboard> {
     var snap =
         await firestore.patientuserCollection.doc(firestore.patientuser).get();
     patientuser = PatientUser.fromSnap(snap);
-    await fetchSharedRecords();
   }
 
   @override
   void initState() {
     super.initState();
     addData();
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      if (user != null) {
-        // Fetch shared records immediately after successful login
-        fetchSharedRecords();
-      }
-    });
     getUser();
     fetchSharedRecords();
-
-    recordStream = FirebaseFirestore.instance
-        .collection('SharedRecords')
-        .where('id', isEqualTo: patientuser.patientId)
-        .snapshots();
+    recordStream =
+        FirebaseFirestore.instance.collection('SharedRecords').snapshots();
   }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  final userModel = FirebaseAuth.instance.currentUser;
-  FirebaseAuth auth = FirebaseAuth.instance;
-  //signout function
-
-  Future<void> signOut() async {
-    await auth.signOut();
-    // ignore: use_build_context_synchronously
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const LoginPage()));
-  }
-
-  addData() async {
-    PatientUserProvider patientuserProvider =
-        Provider.of<PatientUserProvider>(context, listen: false);
-    await fetchSharedRecords();
-
-    await patientuserProvider.refreshPatientUser();
-  }
-
-  // Add this list
 
   Future<void> fetchSharedRecords() async {
     final patientuserProvider =
@@ -107,6 +71,23 @@ class _PatientDashboardState extends State<PatientDashboard> {
     }
   }
 
+  final userModel = FirebaseAuth.instance.currentUser;
+  FirebaseAuth auth = FirebaseAuth.instance;
+  //signout function
+
+  Future<void> signOut() async {
+    await auth.signOut();
+    // ignore: use_build_context_synchronously
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => const LoginPage()));
+  }
+
+  addData() async {
+    PatientUserProvider patientuserProvider =
+        Provider.of<PatientUserProvider>(context, listen: false);
+    await patientuserProvider.refreshPatientUser();
+  }
+
   Future<void> _approveRecord(SharedRecordModel record) async {
     // Update the approval status of the record
     await FirebaseFirestore.instance
@@ -127,9 +108,6 @@ class _PatientDashboardState extends State<PatientDashboard> {
           .doc(record.id)
           .update({'approvalStatus': 'declined'});
 
-      // Refresh the shared records list
-      await fetchSharedRecords();
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Record declined')),
       );
@@ -147,9 +125,6 @@ class _PatientDashboardState extends State<PatientDashboard> {
           .collection('SharedRecords')
           .doc(record.id)
           .update({'approvalStatus': 'revoked'});
-
-      // Refresh the shared records list
-      await fetchSharedRecords();
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Access revoked')),
@@ -201,8 +176,10 @@ class _PatientDashboardState extends State<PatientDashboard> {
                 const Divider(),
                 ListTile(
                   leading: const Icon(Icons.person),
-                  title: const Text('Doctors with your records:'),
-                  onTap: () {},
+                  title: const Text('My records'),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/ReceivingDoctorScreen');
+                  },
                 ),
                 ListTile(
                   leading: const Icon(Icons.settings),
@@ -224,7 +201,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
           } else if (index == 1) {
             Navigator.pushNamed(context, '/settings');
           } else if (index == 2) {
-            Navigator.pushNamed(context, '/home');
+            Navigator.pushNamed(context, '/homes');
           }
         },
         type: BottomNavigationBarType.fixed,
@@ -306,7 +283,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
                             final patientuser =
                                 patientuserProvider.getPatientUser;
                             return Text(
-                              'Hey ${patientuser.username}, do you Approve Sharing Your Record from Doctor ${record.sharingDoctorName} to Doctor ${record.receivingDoctorName}',
+                              'Hey ${patientuser.username}, do you Approve Sharing Your Records  from Doctor ${record.sharingDoctorName} to Doctor ${record.receivingDoctorName}',
                             );
                           },
                         ),
@@ -321,7 +298,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
                                 return AlertDialog(
                                   title: const Text('Revoke Access'),
                                   content: Text(
-                                    'Do you want to revoke access to the record from Doctor ${record.sharingDoctorName}?',
+                                    'Doctor ${record.receivingDoctorName} will not see your records again if you revoke access',
                                   ),
                                   actions: [
                                     ElevatedButton(

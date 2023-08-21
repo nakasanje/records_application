@@ -11,7 +11,7 @@ class _NotificationsState extends State<Notifications> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Text('Notifications'),
+      body: Text(' You Dont Have Any Notifications'),
     );
   }
 }

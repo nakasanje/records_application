@@ -41,6 +41,7 @@ class _LoginPageState extends State<LoginPage> {
   Future signIn() async {
     try {
       if (_formKey.currentState!.validate()) {
+        FocusManager.instance.primaryFocus!.unfocus();
         setState(() {
           loading = true;
         });
@@ -165,7 +166,7 @@ class _LoginPageState extends State<LoginPage> {
                       TextButton(
                         onPressed: () =>
                             Navigator.pushNamed(context, PSignUp.routeName),
-                        child: const Text("Create an Account"),
+                        child: const Text("Don't Have Account? SignUp"),
                       ),
                       TextButton(
                         onPressed: () => Navigator.push(

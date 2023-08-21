@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:records_application/pages/edit.dart';
 import 'package:records_application/pages/patientdetails.dart';
 import 'package:records_application/pages/patientrecords.dart';
+import 'package:records_application/pages/patientrecordsdetails.dart';
 import 'package:records_application/pages/receiverecords.dart';
 import 'package:records_application/pages/sharerecords.dart';
 import 'package:records_application/pages/uploadrecords.dart';
@@ -86,6 +87,7 @@ class MyApp extends StatelessWidget {
           '/home': (context) => const Dashboard(),
           '/homes': (context) => const PatientDashboard(),
           '/PatientDetails': (context) => const PatientDetails(),
+          '/PatientDetail': (context) => const PatientDetail(),
           '/ReceivingDoctorScreen': (context) => const ReceivingDoctorsScreen()
         },
       ),

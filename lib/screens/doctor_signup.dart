@@ -38,6 +38,7 @@ class _SignUpState extends State<SignUp> {
 
   void signUp() async {
     if (_formKey.currentState!.validate()) {
+      FocusManager.instance.primaryFocus!.unfocus();
       if (context.mounted) {
         showDialog(
             context: context,
@@ -50,11 +51,12 @@ class _SignUpState extends State<SignUp> {
 
       if (_image != null) {
         await AuthMethod().signUpDoctor(
-            name: nameController.text,
-            email: emailController.text,
-            password: passwordController.text,
-            file: _image!,
-            role: 'doctor');
+          name: nameController.text,
+          email: emailController.text,
+          password: passwordController.text,
+          file: _image!,
+          role: 'doctor',
+        );
 
         if (context.mounted) {
           Navigator.pushNamed(context, DocLoginPage.routeName);

@@ -40,6 +40,7 @@ class _PSignUpState extends State<PSignUp> {
 
   void signUp() async {
     if (_formKey.currentState!.validate()) {
+      FocusManager.instance.primaryFocus!.unfocus();
       if (context.mounted) {
         showDialog(
             context: context,
