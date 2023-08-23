@@ -6,10 +6,12 @@ import 'package:records_application/pages/receiverecords.dart';
 import 'package:records_application/pages/uploadrecords.dart';
 import 'package:records_application/pages/verification.dart';
 import 'package:records_application/screens/doctorlogin.dart';
+import 'package:records_application/screens/fetch_doctors.dart';
 import 'package:records_application/screens/patientsignup.dart';
 import 'models/patient.dart';
 import 'pages/patientrecords.dart';
 import 'pages/sharerecords.dart';
+
 import 'screens/loginpage.dart';
 import 'screens/doctor_signup.dart';
 
@@ -27,11 +29,13 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
 
     case SignUp.routeName:
       return MaterialPageRoute(
-        settings: routeSettings,
-        builder: (_) => const SignUp(),
-      );
+          settings: routeSettings, builder: (_) => const SignUp());
+
     case PSignUp.routeName:
       return MaterialPageRoute(builder: (_) => const PSignUp());
+
+    case Fetch.routeName:
+      return MaterialPageRoute(builder: (_) => const Fetch());
 
     case ShareRecords.routeName:
       return MaterialPageRoute(builder: (_) => const ShareRecords());

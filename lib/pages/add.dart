@@ -8,7 +8,6 @@ import '../methods/firestore.dart';
 import '../models/patient.dart';
 import '../models/patient_user.dart';
 import '../providers/doctor_provider.dart';
-import '../providers/patient_user_provider.dart';
 
 class AddPatientPage extends StatefulWidget {
   const AddPatientPage({Key? key}) : super(key: key);

@@ -18,13 +18,16 @@ import 'package:records_application/screens/doctorlogin.dart';
 import 'package:records_application/screens/receivingdoc.dart';
 import 'package:records_application/selection.dart';
 
+import 'Admin/admindashboard.dart';
 import 'firebase_options.dart';
 import 'models/patient.dart';
 import 'navbarpages/notifications.dart';
 import 'navbarpages/pat_settings.dart';
 import 'navbarpages/settings.dart';
+import 'pages/doctor_edit.dart';
 import 'providers/doctor_provider.dart';
 import 'screens/doctor_dashboard.dart';
+import 'screens/fetch_doctors.dart';
 import 'screens/patient_dashboard.dart';
 import 'screens/patientsignup.dart';
 
@@ -67,6 +70,7 @@ class MyApp extends StatelessWidget {
           SignUp.routeName: (context) => const SignUp(),
           // ignore: equal_keys_in_map
           PSignUp.routeName: (context) => const PSignUp(),
+          Fetch.routeName: (context) => const Fetch(),
           LoginPage.routeName: (context) => const LoginPage(),
           DocLoginPage.routeName: (context) => const DocLoginPage(),
           PatientRecords.routeName: (context) => const PatientRecords(),
@@ -85,8 +89,10 @@ class MyApp extends StatelessWidget {
           '/setting': (context) => const Settings(),
           '/notifications': (context) => const Notifications(),
           '/home': (context) => const Dashboard(),
+          '/home1': (context) => const AdminDashboard(),
           '/homes': (context) => const PatientDashboard(),
           '/PatientDetails': (context) => const PatientDetails(),
+          '/DoctorDetails': (context) => const ProductsTrendsList(),
           '/PatientDetail': (context) => const PatientDetail(),
           '/ReceivingDoctorScreen': (context) => const ReceivingDoctorsScreen()
         },
