@@ -76,6 +76,7 @@ class _ReceivingDoctorsScreenState extends State<ReceivingDoctorsScreen> {
           doctorName: doc['doctorName'],
           results: doc['results'],
           doctorId: doc['doctorId'],
+          date: doc['date'],
         );
       }).toList();
 

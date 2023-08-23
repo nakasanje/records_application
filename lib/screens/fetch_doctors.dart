@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -15,9 +17,9 @@ class Fetch extends StatelessWidget {
     QuerySnapshot snapshot =
         await FirebaseFirestore.instance.collection("doctor").get();
 
-    snapshot.docs.forEach((doc) {
+    for (var doc in snapshot.docs) {
       products.add(doc.data() as Map<String, dynamic>);
-    });
+    }
 
     return products;
   }

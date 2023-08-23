@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:records_application/models/patient_user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Services/patient_auth.dart';
 import '../constants/custom_button.dart';
 import '../constants/space.dart';
@@ -31,7 +32,6 @@ class _PatientDashboardState extends State<PatientDashboard> {
   late Stream<QuerySnapshot> recordStream;
 
   Variables variables = Variables();
-
   late PatientUser patientuser;
   getUser() async {
     var snap =
@@ -44,6 +44,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
     super.initState();
     addData();
     getUser();
+    _loadTextSize();
     fetchSharedRecords();
     recordStream =
         FirebaseFirestore.instance.collection('SharedRecords').snapshots();
@@ -67,6 +68,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
         sharedRecords = recordsData;
       });
     } catch (e) {
+      // ignore: avoid_print
       print(e);
     }
   }
@@ -87,6 +89,13 @@ class _PatientDashboardState extends State<PatientDashboard> {
         Provider.of<PatientUserProvider>(context, listen: false);
     await patientuserProvider.refreshPatientUser();
   }
+
+  Future<void> _loadTextSize() async {
+    setState(() {});
+  }
+
+// Inside the build method of _PatientDashboardState
+// Apply the _textSize to your text styles
 
   Future<void> _approveRecord(SharedRecordModel record) async {
     // Update the approval status of the record

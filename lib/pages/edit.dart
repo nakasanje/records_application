@@ -3,13 +3,14 @@ import '../constants/custom_button.dart';
 import '../constants/space.dart';
 import '../methods/firestore.dart';
 import '../models/patient.dart';
+import '../models/patient_user.dart';
 
 class EditPatientDetails extends StatefulWidget {
   static const routeName = '/editPatientDetails';
 
-  final PatientModel patient;
-
-  const EditPatientDetails({required this.patient});
+  const EditPatientDetails({
+    super.key,
+  });
 
   @override
   _EditPatientDetailsState createState() => _EditPatientDetailsState();
@@ -19,36 +20,56 @@ class _EditPatientDetailsState extends State<EditPatientDetails> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
+  final TextEditingController dateController = TextEditingController();
   final TextEditingController testNameController = TextEditingController();
   final TextEditingController doctorNameController = TextEditingController();
   final TextEditingController resultsController = TextEditingController();
 
+  final FirestoreMethods firestore = FirestoreMethods();
+  List<PatientUser> patientsToApprove = [];
+  String _doctorId = ''; // Make _id non-nullable
+  String _name = '';
+  int _age = 0;
+  String _testName = '';
+  String _results = '';
+  String _date = '';
+  String _doctorName = '';
+  String _id = '';
+
   @override
   void initState() {
     super.initState();
-    // Initialize the controllers with existing patient details
-    nameController.text = widget.patient.name;
-    ageController.text = widget.patient.age.toString();
-    testNameController.text = widget.patient.testName;
-    doctorNameController.text = widget.patient.doctorName;
-    resultsController.text = widget.patient.results;
   }
 
-  void _updatePatient() async {
+  // Navigate back to patient details screen
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      final updatedPatient = PatientModel(
-        id: widget.patient.id,
-        name: nameController.text,
-        age: int.parse(ageController.text),
-        testName: testNameController.text,
-        doctorName: doctorNameController.text,
-        results: resultsController.text,
-        doctorId: widget.patient.doctorId,
+      _formKey.currentState!.save();
+
+      PatientModel patient = PatientModel(
+        date: _date,
+        id: _id,
+        name: nameController.text, // Use the controller's text
+        age: int.parse(ageController.text), // Parse the text to an int
+        testName: testNameController.text, // Use the controller's text
+        results: resultsController.text, // Use the controller's text
+        doctorName: doctorNameController.text, // Use the controller's text
+        doctorId: _doctorId,
       );
 
-      await FirestoreMethods().updatePatient(updatedPatient);
+      await firestore.updatePatient(patient);
 
-      Navigator.pop(context); // Navigate back to patient details screen
+      // Clear the text fields
+      nameController.clear();
+      ageController.clear();
+      dateController.clear();
+      testNameController.clear();
+      doctorNameController.clear();
+      resultsController.clear();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Patient details updated successfully')),
+      );
     }
   }
 
@@ -56,6 +77,7 @@ class _EditPatientDetailsState extends State<EditPatientDetails> {
   void dispose() {
     nameController.dispose();
     ageController.dispose();
+    dateController.dispose();
     testNameController.dispose();
     doctorNameController.dispose();
     resultsController.dispose();
@@ -73,6 +95,10 @@ class _EditPatientDetailsState extends State<EditPatientDetails> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            TextField(
+              controller: dateController,
+              decoration: const InputDecoration(labelText: 'Date'),
+            ),
             TextField(
               controller: nameController,
               decoration: const InputDecoration(labelText: 'Name'),
@@ -101,7 +127,7 @@ class _EditPatientDetailsState extends State<EditPatientDetails> {
             ),
             const Space(),
             CustomButton(
-              onTap: _updatePatient,
+              onTap: _submitForm,
               label: 'Save Changes',
             ),
           ],

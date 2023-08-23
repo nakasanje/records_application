@@ -52,12 +52,10 @@ class _SettingsState extends State<Settings> {
       ),
     );
 
-    if (newSize != null) {
-      setState(() {
-        _currentTextSize = newSize;
-      });
-      await _saveTextSize(newSize);
-    }
+    setState(() {
+      _currentTextSize = newSize;
+    });
+    await _saveTextSize(newSize);
   }
 
   @override

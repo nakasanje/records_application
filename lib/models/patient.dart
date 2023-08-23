@@ -10,11 +10,13 @@ class PatientModel {
   final String doctorId;
   final String testName;
   final String results;
+  final String date;
   final String doctorName;
   //final String role;
 
   PatientModel({
     required this.id,
+    required this.date,
     required this.age,
     required this.name,
     required this.testName,
@@ -27,6 +29,7 @@ class PatientModel {
   static fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
     return PatientModel(
+      date: snapshot["date"],
       id: snapshot["id"],
       name: snapshot["name"],
       doctorId: snapshot['doctorId'],
@@ -41,6 +44,7 @@ class PatientModel {
   Map<String, dynamic> toJson() => {
         "username": name,
         "id": id,
+        "date": date,
         "age": age,
         'doctorId': doctorId,
         "testName": testName,

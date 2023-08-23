@@ -30,6 +30,8 @@ class PatientDetails extends StatelessWidget {
             const SizedBox(height: 10),
             Text('Age: ${patient.age}'),
             const SizedBox(height: 10),
+            Text('Date: ${patient.date}'),
+            const SizedBox(height: 10),
             Text('Test Name: ${patient.testName}'),
             const SizedBox(height: 10),
             Text('Doctor Name: ${patient.doctorName}'),
@@ -37,16 +39,6 @@ class PatientDetails extends StatelessWidget {
             Text('Results: ${patient.results}'),
             const SizedBox(height: 20),
             const Space(),
-            CustomButton(
-              label: 'Edit',
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  EditPatientDetails.routeName,
-                  arguments: patient, // Pass the patient to the edit page
-                );
-              },
-            ),
           ],
           // You can add more patient-related information here
         ),

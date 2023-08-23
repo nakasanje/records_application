@@ -71,6 +71,7 @@ class _ReceivingDoctorPageState extends State<ReceivingDoctorPage> {
 
       final patientsData = snapshot.docs.map<PatientModel>((doc) {
         return PatientModel(
+          date: doc['date'],
           id: doc.id,
           name: doc['name'] ?? 'Unknown Name',
           age: doc['age'] ?? 'Unknown Age',

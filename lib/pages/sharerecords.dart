@@ -77,6 +77,7 @@ class _ShareRecordsState extends State<ShareRecords> {
 
       final patientsData = snapshot.docs.map<PatientModel>((doc) {
         return PatientModel(
+          date: doc['date'],
           id: doc.id,
           doctorId: doctor.doctorId,
           name: doc['name'] ?? 'Unknown Name',

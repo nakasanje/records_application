@@ -44,12 +44,7 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       return MaterialPageRoute(builder: (_) => const ReceivingDoctorPage());
 
     case EditPatientDetails.routeName:
-      return MaterialPageRoute(
-          builder: (_) => EditPatientDetails(
-                patient: ModalRoute.of(context as BuildContext)!
-                    .settings
-                    .arguments as PatientModel,
-              ));
+      return MaterialPageRoute(builder: (_) => const EditPatientDetails());
 
     case PatientRecords.routeName:
       return MaterialPageRoute(builder: (_) => const PatientRecords());

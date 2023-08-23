@@ -77,10 +77,7 @@ class MyApp extends StatelessWidget {
           ShareRecords.routeName: (context) => const ShareRecords(),
           UploadRecords.routeName: (context) => const UploadRecords(),
           Verification.routeName: (context) => const Verification(),
-          EditPatientDetails.routeName: (context) => EditPatientDetails(
-                patient:
-                    ModalRoute.of(context)!.settings.arguments as PatientModel,
-              ),
+          EditPatientDetails.routeName: (context) => const EditPatientDetails(),
 
           ReceivingDoctorPage.routeName: (context) =>
               const ReceivingDoctorPage(),

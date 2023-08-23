@@ -25,8 +25,9 @@ class _AddPatientPageState extends State<AddPatientPage> {
   int _age = 0;
   String _testName = '';
   String _results = '';
+  String _date = '';
   String _doctorName = '';
-  late String _id;
+  String _id = '';
 
   @override
   void initState() {
@@ -41,6 +42,7 @@ class _AddPatientPageState extends State<AddPatientPage> {
       _formKey.currentState!.save();
 
       PatientModel patient = PatientModel(
+        date: _date,
         id: _id,
         name: _name,
         age: _age,
@@ -96,6 +98,20 @@ class _AddPatientPageState extends State<AddPatientPage> {
           key: _formKey,
           child: Column(
             children: [
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'Date'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the date';
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  setState(() {
+                    _date = value;
+                  });
+                },
+              ),
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Name'),
                 validator: (value) {

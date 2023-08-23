@@ -123,14 +123,18 @@ class FirestoreMethods {
       await firestore.collection('patients').doc(patient.id).update({
         'name': patient.name,
         'age': patient.age,
+        "date": patient.date,
+        'id': patient.id,
         'testName': patient.testName,
         'doctorName': patient.doctorName,
         'results': patient.results,
         'doctorId': patient.doctorId,
         // Update other patient details as needed
       });
+      // ignore: avoid_print
       print('Patient details updated successfully');
     } catch (e) {
+      // ignore: avoid_print
       print('Error updating patient details: $e');
     }
   }
@@ -139,6 +143,7 @@ class FirestoreMethods {
     await patientCollection.add({
       'name': patient.name,
       'id': patient.id,
+      "date": patient.date,
       'doctorId': patient.doctorId,
       'testName': patient.testName,
       'age': patient.age,
