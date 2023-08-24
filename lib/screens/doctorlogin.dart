@@ -160,7 +160,7 @@ class _DocLoginPageState extends State<DocLoginPage> {
                             TextButton(
                               onPressed: () => Navigator.pushNamed(
                                   context, SignUp.routeName),
-                              child: const Text("Create an Account"),
+                              child: const Text("Don't Have Account? SignUp"),
                             ),
                             TextButton(
                               onPressed: () => Navigator.push(

@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,27 +16,26 @@ class ReceivingDoctorsScreen extends StatefulWidget {
 }
 
 class _ReceivingDoctorsScreenState extends State<ReceivingDoctorsScreen> {
-  List<PatientModel> patients = [];
-  List<PatientModel> filteredPatients = [];
-  late model.PatientUser patientuser;
   List<SharedRecordModel> sharedRecords = [];
   FirestoreMethods firestore = FirestoreMethods();
+  late model.PatientUser patientuser;
 
   @override
   void initState() {
     super.initState();
-    fetchPatients();
     fetchSharedRecords();
   }
 
   Future<void> fetchSharedRecords() async {
     try {
+      final patientuserProvider =
+          Provider.of<PatientUserProvider>(context, listen: false);
+      patientuser = patientuserProvider.getPatientUser;
       final patientId = patientuser.patientId;
 
       final snapshot = await FirebaseFirestore.instance
           .collection('SharedRecords')
           .where('id', isEqualTo: patientId)
-          //.where('approvalStatus', isEqualTo: 'approved')
           .get();
 
       final recordsData = snapshot.docs.map<SharedRecordModel>((doc) {
@@ -46,44 +44,6 @@ class _ReceivingDoctorsScreenState extends State<ReceivingDoctorsScreen> {
 
       setState(() {
         sharedRecords = recordsData;
-        // Filter shared records based on the patientId and receivingDoctorId
-        sharedRecords = sharedRecords
-            .where((record) => patients.any(
-                  (patient) => record.patientId == patient.id,
-                ))
-            .toList();
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Future<void> fetchPatients() async {
-    final patientuserProvider =
-        Provider.of<PatientUserProvider>(context, listen: false);
-    patientuser = patientuserProvider.getPatientUser;
-
-    try {
-      final snapshot =
-          await FirebaseFirestore.instance.collection('patients').get();
-
-      final patientsData = snapshot.docs.map<PatientModel>((doc) {
-        return PatientModel(
-          id: doc.id,
-          name: doc['name'] ?? 'Unknown Name',
-          age: doc['age'] ?? 'Unknown Age',
-          testName: doc['testName'] ?? 'Unknown Test',
-          doctorName: doc['doctorName'],
-          results: doc['results'],
-          doctorId: doc['doctorId'],
-          date: doc['date'],
-        );
-      }).toList();
-
-      // Filter patients based on the patientIds from shared records
-
-      setState(() {
-        patients = patientsData;
       });
     } catch (e) {
       print(e);
@@ -93,7 +53,7 @@ class _ReceivingDoctorsScreenState extends State<ReceivingDoctorsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('My Records')),
+      appBar: AppBar(title: const Text('My Doctors')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -104,53 +64,22 @@ class _ReceivingDoctorsScreenState extends State<ReceivingDoctorsScreen> {
                 itemCount: sharedRecords.length,
                 itemBuilder: (context, index) {
                   final record = sharedRecords[index];
-                  final matchingPatient = patients.firstWhere(
-                    (patient) => patient.id == record.patientId,
-                  );
-
-                  if (matchingPatient == null) {
-                    return ListTile(
-                      title: const Text('Unknown Patient'),
-                      subtitle: Text('Patient ID: ${record.patientId}'),
-                    );
-                  }
 
                   return ListTile(
-                      title: Text('Name: ${matchingPatient.name}'),
-                      subtitle: Text('Age: ${matchingPatient.age}'),
-                      onTap: () {
-                        _showPatientDetailsDialog(matchingPatient);
-                      });
+                    title:
+                        Text(' Sharing Doctor : ${record.sharingDoctorName}'),
+                    subtitle:
+                        Text('Receiving Doctor: ${record.receivingDoctorName}'),
+                    onTap: () {
+                      // Implement your logic for tapping on a record here
+                    },
+                  );
                 },
               ),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  void _showPatientDetailsDialog(PatientModel patient) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          // ... other dialog content
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(
-                  context,
-                  '/PatientDetail',
-                  arguments: patient, // Pass the selected patient
-                );
-              },
-              child: const Text('Show Details'),
-            ),
-          ],
-        );
-      },
     );
   }
 }

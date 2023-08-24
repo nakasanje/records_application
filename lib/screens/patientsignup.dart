@@ -19,7 +19,7 @@ import '../constants/utils.dart';
 import 'loginpage.dart';
 
 class PSignUp extends StatefulWidget {
-  static const routeName = "/signup";
+  static const routeName = "/psignup";
 
   const PSignUp({super.key});
   @override

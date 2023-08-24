@@ -42,7 +42,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
   void initState() {
     super.initState();
     addData();
-    fetchPatientDetails();
+
     _recordStreamSubscription = FirebaseFirestore.instance
         .collection('SharedRecords')
         .snapshots()
@@ -76,7 +76,6 @@ class _PatientDashboardState extends State<PatientDashboard> {
     final patientuserProvider =
         Provider.of<PatientUserProvider>(context, listen: false);
     patientuser = patientuserProvider.getPatientUser;
-    await fetchSharedRecords();
   }
 
   Future<void> fetchSharedRecords() async {
@@ -95,7 +94,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
         return SharedRecordModel(
           sharingDoctorName: doc['sharingDoctorName'],
           approvalStatus: doc['approvalStatus'],
-          id: patientId,
+          id: doc.id,
           patientId: doc['patientId'],
           receivingDoctorId: doc['receivingDoctorId'],
           sharingDoctorId: doc['sharingDoctorId'],
@@ -181,61 +180,63 @@ class _PatientDashboardState extends State<PatientDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    final patientuserProvider =
-        Provider.of<PatientUserProvider>(context, listen: false);
-    final patientuser = patientuserProvider.getPatientUser;
-
     return FutureBuilder<void>(
         future: Future.wait([fetchPatientDetails(), fetchSharedRecords()]),
         builder: (context, snapshot) {
           return Scaffold(
             appBar: AppBar(title: const Text('Patient Dashboard')),
             drawer: Drawer(
-              child: ListView(
-                children: [
-                  UserAccountsDrawerHeader(
-                    currentAccountPicture: InkWell(
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        clipBehavior: Clip.antiAlias,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
+              child: Consumer<PatientUserProvider>(
+                builder: (context, doctorProvider, _) {
+                  final patientuser = doctorProvider.getPatientUser;
+                  return ListView(
+                    children: [
+                      UserAccountsDrawerHeader(
+                        currentAccountPicture: InkWell(
+                          child: Container(
+                            width: 50,
+                            height: 50,
+                            clipBehavior: Clip.antiAlias,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                            ),
+                            child: Image.network(
+                              patientuser.photoUrl,
+                              fit: BoxFit.fill,
+                            ),
+                          ),
                         ),
-                        child: Image.network(
-                          patientuser.photoUrl,
-                          fit: BoxFit.fill,
-                        ),
+                        accountName: Text(
+                            patientuser.username), // Use the doctor's username
+                        accountEmail:
+                            Text(patientuser.email), // Use the doctor's email
                       ),
-                    ),
-                    accountName:
-                        Text(patientuser.username), // Use the doctor's username
-                    accountEmail:
-                        Text(patientuser.email), // Use the doctor's email
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.home),
-                    title: const Text('Home'),
-                    onTap: () {
-                      Navigator.pushNamed(context, '/homes');
-                    },
-                  ),
-                  const Divider(),
-                  ListTile(
-                    leading: const Icon(Icons.person),
-                    title: const Text('My records'),
-                    onTap: () {
-                      Navigator.pushNamed(context, '/ReceivingDoctorScreen');
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.settings),
-                    title: const Text('Settings'),
-                    onTap: () {
-                      Navigator.pushNamed(context, '/setting');
-                    },
-                  ),
-                ],
+                      ListTile(
+                        leading: const Icon(Icons.home),
+                        title: const Text('Home'),
+                        onTap: () {
+                          Navigator.pushNamed(context, '/homes');
+                        },
+                      ),
+                      const Divider(),
+                      ListTile(
+                        leading: const Icon(Icons.person),
+                        title: const Text('My Doctors'),
+                        onTap: () {
+                          Navigator.pushNamed(
+                              context, '/ReceivingDoctorScreen');
+                        },
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.settings),
+                        title: const Text('Settings'),
+                        onTap: () {
+                          Navigator.pushNamed(context, '/setting');
+                        },
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
             bottomNavigationBar: BottomNavigationBar(
